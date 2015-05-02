@@ -1,9 +1,9 @@
-jQuery.sap.require("ui5bp.app.config");
+jQuery.sap.require("quicksurvey.app.config");
 
-sap.ui.jsview("ui5bp.view.CoffeeList", {
+sap.ui.jsview("quicksurvey.view.CoffeeList", {
 
     getControllerName: function() {
-        return "ui5bp.view.CoffeeList";
+        return "quicksurvey.view.CoffeeList";
     },
 
     createContent: function(oController) {
@@ -21,7 +21,7 @@ sap.ui.jsview("ui5bp.view.CoffeeList", {
 
         var oBtnLaunchpad = new sap.m.Button({
             icon : "sap-icon://home",
-            visible : ui5bp.app.config.LaunchpadMode,
+            visible : quicksurvey.app.config.LaunchpadMode,
             tooltip : "Back to Launchpad",
             press : function(ev) {
                 sap.ui.getCore().getEventBus().publish("nav", "back", {id : "Launchpad"});

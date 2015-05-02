@@ -1,9 +1,9 @@
-jQuery.sap.require("ui5bp.app.config");
+jQuery.sap.require("quicksurvey.app.config");
 
-sap.ui.jsview("ui5bp.view.SurveyList", {
+sap.ui.jsview("quicksurvey.view.SurveyList", {
 
     getControllerName: function() {
-        return "ui5bp.view.SurveyList";
+        return "quicksurvey.view.SurveyList";
     },
 
     createContent: function(oController) {
@@ -20,7 +20,7 @@ sap.ui.jsview("ui5bp.view.SurveyList", {
 
 		var oBtnNew = new sap.m.Button({
             icon : "sap-icon://create",
-            visible : ui5bp.app.config.LaunchpadMode,
+            visible : quicksurvey.app.config.LaunchpadMode,
             tooltip : "Create a new survey",
             press : function(ev) {
 				console.log("Not yet implemented");
@@ -30,7 +30,7 @@ sap.ui.jsview("ui5bp.view.SurveyList", {
 		
         var oBtnLaunchpad = new sap.m.Button({
             icon : "sap-icon://home",
-            visible : ui5bp.app.config.LaunchpadMode,
+            visible : quicksurvey.app.config.LaunchpadMode,
             tooltip : "Back to Launchpad",
             press : function(ev) {
                 sap.ui.getCore().getEventBus().publish("nav", "back", {id : "Launchpad"});

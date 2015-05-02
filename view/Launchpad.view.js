@@ -1,8 +1,8 @@
 // ======= HECQTA ========
-sap.ui.jsview("ui5bp.view.Launchpad", {
+sap.ui.jsview("quicksurvey.view.Launchpad", {
 
     getControllerName: function() {
-        return "ui5bp.view.Launchpad";
+        return "quicksurvey.view.Launchpad";
     },
 
     createContent: function(oController) {

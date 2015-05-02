@@ -1,4 +1,4 @@
-sap.ui.controller("ui5bp.view.SurveyList", {
+sap.ui.controller("quicksurvey.view.SurveyList", {
 
     onInit: function() {
         this.bus = sap.ui.getCore().getEventBus();

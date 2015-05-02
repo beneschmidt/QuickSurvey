@@ -1,4 +1,4 @@
-sap.ui.controller("ui5bp.view.Launchpad", {
+sap.ui.controller("quicksurvey.view.Launchpad", {
 	
     onInit: function() {
         this.bus = sap.ui.getCore().getEventBus();

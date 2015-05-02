@@ -1,7 +1,7 @@
 jQuery.sap.require("jquery.sap.history");
 jQuery.sap.require("sap.m.InstanceManager");
 
-sap.ui.controller("ui5bp.view.App", {
+sap.ui.controller("quicksurvey.view.App", {
 	
 	getDefaultPage : function () {
 		return "Menu";

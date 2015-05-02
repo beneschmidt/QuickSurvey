@@ -1,7 +1,7 @@
 //UI5 Boilerplate Configuration
-jQuery.sap.declare("ui5bp.app.config");
+jQuery.sap.declare("quicksurvey.app.config");
 
-ui5bp.app.config = {
+quicksurvey.app.config = {
 
 	//Navigation Mode (LaunchpadMode: false -> LeftMenu Navigation)
     LaunchpadMode: true

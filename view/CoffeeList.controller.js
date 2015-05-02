@@ -1,4 +1,4 @@
-sap.ui.controller("ui5bp.view.CoffeeList", {
+sap.ui.controller("quicksurvey.view.CoffeeList", {
 
     onInit: function() {
         this.getView().setModel(new sap.ui.model.json.JSONModel("model/coffee.json"));

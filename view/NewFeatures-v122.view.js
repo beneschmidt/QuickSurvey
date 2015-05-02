@@ -2,7 +2,7 @@ jQuery.sap.require("sap.ui.layout.form.SimpleForm");
 jQuery.sap.require("sap.ui.unified.Calendar");
 jQuery.sap.require("sap.ui.unified.DateRange");
 
-sap.ui.jsview("ui5bp.view.NewFeatures-v122", {
+sap.ui.jsview("quicksurvey.view.NewFeatures-v122", {
 
 	/**
 	 * Specifies the Controller belonging to this View. In the case that it is
@@ -12,7 +12,7 @@ sap.ui.jsview("ui5bp.view.NewFeatures-v122", {
 	 * @memberOf view.NewFeatues-v122
 	 */
 	getControllerName : function() {
-		return "ui5bp.view.NewFeatures-v122";
+		return "quicksurvey.view.NewFeatures-v122";
 	},
 
 	/**
@@ -184,7 +184,7 @@ sap.ui.jsview("ui5bp.view.NewFeatures-v122", {
         
         var oBtnLaunchpad = new sap.m.Button({
             icon : "sap-icon://home",
-            visible : ui5bp.app.config.LaunchpadMode,
+            visible : quicksurvey.app.config.LaunchpadMode,
             tooltip : "Back to Launchpad",
             press : function(ev) {
                 sap.ui.getCore().getEventBus().publish("nav", "backToPage", {id : "Launchpad"});

@@ -1,5 +1,5 @@
 <core:View
-    controllerName="ui5bp.view.Info"
+    controllerName="quicksurvey.view.Info"
     xmlns="sap.m"
     xmlns:core="sap.ui.core" >
     <Page

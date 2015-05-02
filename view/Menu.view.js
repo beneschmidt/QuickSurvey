@@ -1,7 +1,7 @@
-sap.ui.jsview("ui5bp.view.Menu", {
+sap.ui.jsview("quicksurvey.view.Menu", {
 
     getControllerName: function() {
-        return "ui5bp.view.Menu";
+        return "quicksurvey.view.Menu";
     },
 
     createContent: function(oController) {
