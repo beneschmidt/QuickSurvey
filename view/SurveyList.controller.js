@@ -27,7 +27,6 @@ sap.ui.controller("ui5bp.view.SurveyList", {
 	
 	updateModel: function(json){
 		var model = new sap.ui.model.json.JSONModel(json);
-		console.log("update model");
         this.getView().setModel(model);
 	},  
     

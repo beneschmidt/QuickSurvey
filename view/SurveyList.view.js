@@ -18,6 +18,16 @@ sap.ui.jsview("ui5bp.view.SurveyList", {
         var oList = new sap.m.List({});
         oList.bindAggregation("items", "/Survey", oListTemplate);
 
+		var oBtnNew = new sap.m.Button({
+            icon : "sap-icon://create",
+            visible : ui5bp.app.config.LaunchpadMode,
+            tooltip : "Create a new survey",
+            press : function(ev) {
+				console.log("Not yet implemented");
+                //sap.ui.getCore().getEventBus().publish("nav", "back", {id : "Launchpad"});
+            }
+        });
+		
         var oBtnLaunchpad = new sap.m.Button({
             icon : "sap-icon://home",
             visible : ui5bp.app.config.LaunchpadMode,
@@ -32,7 +42,7 @@ sap.ui.jsview("ui5bp.view.SurveyList", {
             showNavButton: "{device>/isPhone}",
             navButtonPress: [oController.doNavBack, oController],
             content: [oList],
-            headerContent: [oBtnLaunchpad],
+            headerContent: [oBtnNew, oBtnLaunchpad],
             footer: new sap.m.Bar({})
         });
     },
