@@ -12,6 +12,7 @@ sap.ui.jsview("ui5bp.view.SurveyList", {
             title: "{name}",
             icon: "sap-icon://document-text",
             description: "{name}",
+			type: "Active"
         });
 
         var oList = new sap.m.List({});
