@@ -4,6 +4,32 @@ module.exports = {
 	pg : null,
 	http : null,
 	
+	getSurveyList : function(res, req, http, log){
+		this.log = log;
+		this.http = http;
+		var json = {
+			"Survey": [{
+				"objectId": "1",
+				"name": "Survey 1",
+				"questions": "5"
+			}, {
+				"objectId": "2",
+				"name": "Survey 2",
+				"questions": "4"
+			}, {
+				"objectId": "3",
+				"name": "Last Survey",
+				"questions": "3"
+			}]
+		};
+		res.setHeader("Access-Control-Allow-Origin", "http://localhost:8877");
+		log.info("write JSON: "+JSON.stringify(json));
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.write(JSON.stringify(json) + "\n");
+		res.end();
+	},
+	
+	/*
 	returnSQLResult : function(res, req, http, log, table, constraint){
 		this.log = log;
 		this.http = http;
@@ -50,5 +76,5 @@ module.exports = {
 				});
 			});
 		});
-	}
+	}*/
 }

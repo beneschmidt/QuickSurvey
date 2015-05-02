@@ -18,7 +18,11 @@ http.createServer(function(req, res) {
 		var splittedPath = req.url.substr(1).split("/");
 		var firstSubpath = splittedPath[0];
 		log.info("GET request received: "+firstSubpath);
-		console.log("no such firstSubpath");			
+		if(firstSubpath==="surveyList"){
+			rest.getSurveyList(res, req, http, log);
+		} else {
+			log.info("no such subpath: "+firstSubpath);
+		}
 	}
 }).listen(port,host);
 log.info("##### Connected to " + port + "   " + host + " #####");
