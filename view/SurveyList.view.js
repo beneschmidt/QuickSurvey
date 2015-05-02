@@ -10,7 +10,7 @@ sap.ui.jsview("ui5bp.view.SurveyList", {
 
         var oListTemplate = new sap.m.ObjectListItem({
             title: "{name}",
-            icon: "sap-icon://goal",
+            icon: "sap-icon://document-text",
             intro: "{name}",
             number: "{questions}"
         });

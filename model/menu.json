@@ -1,7 +1,7 @@
 {
     "Menu": [{
         "title": "Surveys",
-        "icon": "sap-icon://favorite",
+        "icon": "sap-icon://documents",
         "targetPage": "SurveyList",
         "description": "Keep track of your surveys"
     }, {
