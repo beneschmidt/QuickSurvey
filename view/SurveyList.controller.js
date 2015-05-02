@@ -16,6 +16,12 @@ sap.ui.controller("ui5bp.view.SurveyList", {
 		$.get("http://localhost:5433/surveyList", function( data ) {
 			var json = JSON.parse(data);  
 			that.updateModel(json);
+		}).error( function(jqXHR, textStatus, errorThrown) {
+			if(jqXHR.readyState === 0){
+				alert("Server unreachable");
+			} else {
+				alert("An unknown error occured: "+jqXHR);
+			}
 		});
 	},
 	
