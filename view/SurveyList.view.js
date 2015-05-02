@@ -8,13 +8,10 @@ sap.ui.jsview("ui5bp.view.SurveyList", {
 
     createContent: function(oController) {
 
-        var oListTemplate = new sap.m.ObjectListItem({
+        var oListTemplate = new sap.m.StandardListItem({
             title: "{name}",
             icon: "sap-icon://document-text",
-            intro: "{name}",
-			type : "Active",
-            number: "{questions.length}",
-			numberUnit: "questions"
+            description: "{name}",
         });
 
         var oList = new sap.m.List({});
