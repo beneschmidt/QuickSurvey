@@ -38,8 +38,8 @@ sap.ui.jsview("ui5bp.view.Menu", {
             content: [oList],
             footer: new sap.m.Bar({
                 contentMiddle: [new sap.m.Link("myproLink", {
-                    text: "v0.8.0",
-                    href: "http://blog.mypro.de/tag/ui5boilerplate/"
+                    text: "v0.1.0",
+                    href: "https://github.com/beneschmidt/QuickSurvey"
                 })]
             })
         });
