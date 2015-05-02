@@ -12,7 +12,9 @@ sap.ui.jsview("ui5bp.view.SurveyList", {
             title: "{name}",
             icon: "sap-icon://document-text",
             intro: "{name}",
-            number: "{questions}"
+			type : "Active",
+            number: "{questions.length}",
+			numberUnit: "questions"
         });
 
         var oList = new sap.m.List({});
@@ -35,6 +37,6 @@ sap.ui.jsview("ui5bp.view.SurveyList", {
             headerContent: [oBtnLaunchpad],
             footer: new sap.m.Bar({})
         });
-    }
+    },
 
 });

@@ -3,30 +3,32 @@ module.exports = {
 	log : null,
 	pg : null,
 	http : null,
+	fs : null,
+	first: true,
 	
 	getSurveyList : function(res, req, http, log){
 		this.log = log;
 		this.http = http;
-		var json = {
-			"Survey": [{
-				"objectId": "1",
-				"name": "Survey 1",
-				"questions": "5"
-			}, {
-				"objectId": "2",
-				"name": "Survey 2",
-				"questions": "4"
-			}, {
-				"objectId": "3",
-				"name": "Last Survey",
-				"questions": "3"
-			}]
-		};
-		res.setHeader("Access-Control-Allow-Origin", "http://localhost:8877");
-		log.info("write JSON: "+JSON.stringify(json));
-		res.writeHead(200, {'Content-Type': 'text/plain'});
-		res.write(JSON.stringify(json) + "\n");
-		res.end();
+		var that = this;
+		this.fs = require('fs');
+		// ALTERNATING FILES TO MAKE DIFFERENT RESULTS
+		this.first = !this.first;
+		var fileId = this.first?1:2;
+		var fileName = 'model/survey'+fileId+'.json';
+		
+		this.fs.readFile(fileName, 'utf8', function (err,data) {
+			if (err) {
+				return console.log(err);
+			}
+			var json = JSON.parse(data);
+			res.setHeader("Access-Control-Allow-Origin", "http://localhost:8877");
+			log.info("write JSON: "+JSON.stringify(json));
+			res.writeHead(200, {'Content-Type': 'text/plain'});
+			res.write(JSON.stringify(json) + "\n");
+			res.end();
+		});
+		
+		
 	},
 	
 	/*
