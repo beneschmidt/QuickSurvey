@@ -5,7 +5,7 @@ var urlConfig = {
     protocol : 'http',
     host : 'localhost',
     port : '8877',
-    urlPath : '/ui5-boilerplate'
+    urlPath : '/QuickSurvey'
 }
 
 module.exports = function(grunt) {

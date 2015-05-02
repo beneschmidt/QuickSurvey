@@ -37,11 +37,11 @@ sap.ui.jsview("ui5bp.view.Launchpad", {
 
         var page = new sap.m.Page({
             setShowHeader: true,
-            title: "UI5 Boilerplate Launchpad",
+            title: "QuickSurvey",
             footer: new sap.m.Bar({
                 contentMiddle: [new sap.m.Link("myproLinkLP", {
-                    text: "v0.8.0",
-                    href: "http://blog.mypro.de/tag/ui5boilerplate/"
+                    text: "v0.1.0",
+                    href: "https://github.com/beneschmidt/QuickSurvey"
                 })]
 
             })
