@@ -64,16 +64,17 @@ sap.ui.jsview("quicksurvey.view.App", {
         this.app.addDetailPage(sap.ui.xmlview("Info", "quicksurvey.view.Info"));
         this.app.addDetailPage(sap.ui.jsview("CoffeeList", "quicksurvey.view.CoffeeList"));
         this.app.addDetailPage(sap.ui.jsview("NewFeatures-v122", "quicksurvey.view.NewFeatures-v122"));
+        this.app.addDetailPage(sap.ui.jsview("AddSurvey", "quicksurvey.view.AddSurvey"));
         this.app.addDetailPage(sap.ui.jsview("SurveyList", "quicksurvey.view.SurveyList"));
-        
+
         // navigate to the first page in both master and detail areas.
-        // the toMaster must be called after calling the toDetail, because both of them point to the same reference in phone and 
-        // the real first page that will be shown in phone is the page in master area. 
+        // the toMaster must be called after calling the toDetail, because both of them point to the same reference in phone and
+        // the real first page that will be shown in phone is the page in master area.
         if(quicksurvey.app.config.LaunchpadMode){
             this.app.toDetail("Launchpad");
         } else {
             this.app.toDetail("CoffeeList");
-            this.app.toMaster("Menu");            
+            this.app.toMaster("Menu");
         }
         return this.app;
     }

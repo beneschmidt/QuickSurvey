@@ -35,7 +35,6 @@ module.exports = {
         });
       }
     }
-    log.info(objects);
     var fullList = {
       Survey: objects
     }
