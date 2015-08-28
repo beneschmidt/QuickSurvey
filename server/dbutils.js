@@ -12,7 +12,11 @@ module.exports = {
         objects[spos] = {
           objectId : current.sid,
           name : current.name,
-          questions:[]
+          questions:[],
+          finished: current.finished,
+          startedat: current.startedat,
+          runtime: current.runtime,
+          changeanswers: current.changeanswers
         }
       } else if(qid!= current.qid){
         qpos++;
@@ -21,7 +25,8 @@ module.exports = {
           objectId: current.qid,
           questionText: current.questiontext,
           multiple: current.multiple,
-          answers: []
+          answers: [],
+          type: current.type
         });
       } else {
         objects[spos].questions[qpos].answers.push({
