@@ -13,13 +13,13 @@ sap.ui.controller("quicksurvey.view.SurveyList", {
 
   loadData: function(){
     var that= this;
-
-    $.get("http://localhost:5433/surveyList", function( data ) {
+    console.log("load data...");
+    $.get("./surveyList", function( data ) {
       var json = JSON.parse(data);
       that.updateModel(json);
     }).error( function(jqXHR, textStatus, errorThrown) {
       if(jqXHR.readyState === 0){
-        alert("Server unreachable");
+        console.log(textStatus)
       } else {
         alert("An unknown error occured: "+jqXHR);
       }

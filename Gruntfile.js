@@ -20,14 +20,14 @@ module.exports = function(grunt) {
         watch: {
             express: {
                 files: ['**/*.js'],
-                tasks: ['express:dev'],
+                tasks: ['express:prod'],
                 options: {
                     spawn: false
                 }
             }
         },
         open: {
-            dev: {
+            prod: {
                 path: urlConfig.protocol + '://' + urlConfig.host + ':' + urlConfig.port + urlConfig.urlPath
             }
         },
@@ -36,9 +36,9 @@ module.exports = function(grunt) {
                 // Override defaults here, see more at: https://npmjs.org/package/grunt-express-server
                 args: [urlConfig.protocol, urlConfig.host, urlConfig.port, urlConfig.urlPath]
             },
-            dev: {
+            prod: {
                 options: {
-                    script: 'dev_server.js',
+                    script: 'static_server.js',
                     delay: 100
                 }
             }
@@ -52,8 +52,8 @@ module.exports = function(grunt) {
     });
 
     // tasks
-    grunt.registerTask('server:dev', ['express:dev', 'open:dev', 'watch']);
-    grunt.registerTask('server', ['server:dev']); // alias for "server:dev", since there are no other servers (yet)
-    grunt.registerTask('default', ['server:dev']); // default points to 'server' task
+    grunt.registerTask('server:prod', ['express:prod', 'open:prod', 'watch']);
+    grunt.registerTask('server', ['server:prod']); // alias for "server:prod", since there are no other servers (yet)
+    grunt.registerTask('default', ['server:prod']); // default points to 'server' task
 
 };

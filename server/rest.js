@@ -6,12 +6,10 @@ module.exports = {
 	fs : null,
 	first: true,
 
-	getSurveyList : function(res, req, http, log){
+	getSurveyList : function(res, req, log){
 		this.log = log;
-		this.http = http;
 		var that = this;
 
-		var http = require('http');
 		var pg = require('pg');
 
 		var conString = "postgres://quicksurvey:quicksurvey@localhost:5432/quicksurvey";
@@ -58,9 +56,8 @@ module.exports = {
 		});
 	},
 
-	addNewSurvey : function(res, req, body, http, log){
+	addNewSurvey : function(res, req, body, log){
 		this.log = log;
-		this.http = http;
 		var that = this;
 		this.fs = require('fs');
 		// ALTERNATING FILES TO MAKE DIFFERENT RESULTS
