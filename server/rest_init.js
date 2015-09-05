@@ -12,9 +12,17 @@ module.exports = {
 		app.get("/QuickSurvey/surveyList", function(req, res){
 			rest.getSurveyList(res, req, log);
 		});
+		app.get("/QuickSurvey/survey", function(req, res){
+			log.info("SurveyId: "+req.query.id)
+			rest.getSurvey(req, res, log);
+		});
 		app.post("/QuickSurvey/addNewSurvey", function(req, res){
 			log.info("Adding a new survey...");
       rest.addNewSurvey(res, req, req.body.survey, log);
-		})
+		});
+		app.post("/QuickSurvey/deleteSurvey", function(req, res){
+			log.info("Deleting survey...");
+      rest.deleteSurvey(res, req, req.body.survey, log);
+		});
 	}
 }

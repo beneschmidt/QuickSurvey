@@ -12,7 +12,12 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
       title: "{name}",
       icon: "sap-icon://document-text",
       description: "{name}",
-      type: "Active"
+      type: "Active",
+      customData:[new sap.ui.core.CustomData({key: "objectId", value: "{objectId}"})],
+      press: function(ev){
+        var object = {id : "ChangeSurvey", surveyId: this.getCustomData()[0].getProperty("value")};
+        sap.ui.getCore().getEventBus().publish("nav", "to", object);
+      },
     });
 
     var oList = new sap.m.List({});
@@ -24,8 +29,8 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
       tooltip : "Create a new survey",
       press : function(ev) {
         sap.ui.getCore().getEventBus().publish("nav", "to", {
-    			id : "AddSurvey"
-    		});
+          id : "AddSurvey"
+        });
         //sap.ui.getCore().getEventBus().publish("nav", "back", {id : "Launchpad"});
       }
     });

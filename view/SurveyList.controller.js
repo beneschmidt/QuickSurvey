@@ -29,6 +29,7 @@ sap.ui.controller("quicksurvey.view.SurveyList", {
   updateModel: function(json){
     var model = new sap.ui.model.json.JSONModel(json);
     this.getView().setModel(model);
+    console.log(json);
   },
 
 });

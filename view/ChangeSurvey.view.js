@@ -1,8 +1,7 @@
 jQuery.sap.require("sap.ui.layout.form.SimpleForm");
-jQuery.sap.require("sap.ui.unified.Calendar");
 jQuery.sap.require("sap.ui.unified.DateRange");
 
-sap.ui.jsview("quicksurvey.view.AddSurvey", {
+sap.ui.jsview("quicksurvey.view.ChangeSurvey", {
 
 	/**
 	* Specifies the Controller belonging to this View. In the case that it is
@@ -12,7 +11,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 	* @memberOf view.NewFeatues-v122
 	*/
 	getControllerName : function() {
-		return "quicksurvey.view.AddSurvey";
+		return "quicksurvey.view.ChangeSurvey";
 	},
 
 	/**
@@ -70,12 +69,25 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		oForm.addContent(oChangeAnswersLabel);
 		oForm.addContent(oChangeAnswers);
 
-		var oBtnNew = new sap.m.Button({
+		var oBtnDelete = new sap.m.Button({
+			icon : "sap-icon://delete",
+			visible : quicksurvey.app.config.LaunchpadMode,
+			tooltip : "Delete survey",
+			press : function(ev) {
+				oController.deleteSurvey();
+				sap.ui.getCore().getEventBus().publish("nav", "to", {
+					id : "SurveyList"
+				});
+				//sap.ui.getCore().getEventBus().publish("nav", "back", {id : "Launchpad"});
+			}
+		});
+
+		var oBtnUpdate = new sap.m.Button({
 			icon : "sap-icon://create",
 			visible : quicksurvey.app.config.LaunchpadMode,
-			tooltip : "Create a new survey",
+			tooltip : "Update survey",
 			press : function(ev) {
-				oController.addSurvey();
+				oController.updateSurvey();
 				sap.ui.getCore().getEventBus().publish("nav", "to", {
 					id : "SurveyList"
 				});
@@ -84,7 +96,8 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		});
 
 		var bar = new sap.m.Bar({});
-		bar.addContentRight(oBtnNew);
+		bar.addContentRight(oBtnDelete);
+		bar.addContentRight(oBtnUpdate);
 
 		var oBtnLaunchpad = new sap.m.Button({
 			icon : "sap-icon://home",
@@ -97,7 +110,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 
 
 		return new sap.m.Page({
-			title : "Add Survey",
+			title : "Change Survey",
 			showNavButton: "{device>/isPhone}",
 			navButtonPress: [oController.doNavBack, oController],
 			content : [ oForm ],

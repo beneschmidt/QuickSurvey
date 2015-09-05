@@ -7,6 +7,18 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 	*/
 	onInit: function() {
 		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		this.clearModel();
+
+		//this.getView().setModel(new sap.ui.model.json.JSONModel("model/coffee.json"), "coffee");
+		this.bus = sap.ui.getCore().getEventBus();
+	},
+
+  updateModel: function(json){
+    var model = new sap.ui.model.json.JSONModel(json);
+    this.getView().setModel(model);
+  },
+
+	clearModel: function(){
 		var input = {
 			title   : "",
 			answersChangable   : false,
@@ -15,9 +27,6 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 		var model = new sap.ui.model.json.JSONModel(input);
 		sap.ui.getCore().setModel(model, "input");
 		this.getView().setModel(model, "input");
-
-		//this.getView().setModel(new sap.ui.model.json.JSONModel("model/coffee.json"), "coffee");
-		this.bus = sap.ui.getCore().getEventBus();
 	},
 
 	doNavBack: function(event) {
@@ -25,6 +34,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 	},
 
 	addSurvey: function(event){
+		var controller = this;
 		var model = this.getView().getModel("input");
 		console.log(model);
 		var that= this;
@@ -38,7 +48,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			type: 'post',
 			//	contentType: "application/json; charset=utf-8",
 			success: function (data) {
-				console.log("data send")
+				controller.clearModel();
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				if(jqXHR.readyState === 0){
@@ -46,6 +56,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 				} else {
 					console.log("An unknown error occured: "+textStatus);
 				}
+				controller.clearModel();
 			},
 			data: { survey: survey }
 		});
