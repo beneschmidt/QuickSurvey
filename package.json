@@ -1,25 +1,26 @@
 {
-    "name": "QuickSurvey",
-    "version": "0.1.0",
-    "description": "App for quick surveys",
-    "main": "index.html",
-    "dependencies": {
-        "express": "~3.4.8",
-        "open": "~0.0.4"
-    },
-    "devDependencies": {
-        "grunt": "~0.4.2",
-        "grunt-express-server": "~0.4.11",
-        "grunt-contrib-watch": "~0.5.3",
-        "grunt-open": "~0.2.3"
-    },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/beneschmidt/QuickSurvey.git"
-    },
-    "author": "6of5",
-    "license": "Apache License, Version 2.0"
+  "name": "QuickSurvey",
+  "version": "0.1.0",
+  "description": "App for quick surveys",
+  "main": "index.html",
+  "dependencies": {
+    "body-parser": "^1.13.3",
+    "express": "~3.4.8",
+    "open": "~0.0.4"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-express-server": "~0.4.11",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-open": "~0.2.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beneschmidt/QuickSurvey.git"
+  },
+  "author": "6of5",
+  "license": "Apache License, Version 2.0"
 }

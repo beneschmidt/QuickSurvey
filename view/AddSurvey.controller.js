@@ -34,10 +34,9 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 		};
 
 		$.ajax({
-			url: 'http://localhost:5433/addNewSurvey',
+			url: './addNewSurvey',
 			type: 'post',
 			//	contentType: "application/json; charset=utf-8",
-			dataType: "json",
 			success: function (data) {
 				console.log("data send")
 			},
@@ -48,7 +47,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 					console.log("An unknown error occured: "+textStatus);
 				}
 			},
-			data: JSON.stringify({ survey: survey })
+			data: { survey: survey }
 		});
 	}
 	/**

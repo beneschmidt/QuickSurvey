@@ -87,20 +87,17 @@ module.exports = {
 				}
 				var insert = "INSERT INTO survey (name, changeanswers) VALUES ('"+body.name+"', "+body.answersChangable+")";
 
-				that.log.info(insert);
 				var insertQuery = oClient.query(insert);
 				insertQuery.on('row', function(row) {
 					that.result.push(row);
 				});
 				insertQuery.on('end', function(result) {
 					if(result.rowCount===0){
-						that.log.info(result);
 						oClient.end();
 					} else {
 						that.log.info(result);
 						oClient.query('COMMIT', oClient.end.bind(oClient));
 						// empty 200 OK response for now
-						res.setHeader("Access-Control-Allow-Origin", "*");
 						res.writeHead(200, "OK", {'Content-Type': 'text/html'});
 						res.end();
 					}

@@ -1,18 +1,24 @@
 // Usage see http://scn.sap.com/community/developer-center/front-end/blog/2014/01/05/sapui5-sdk-on-nodejs
 var express = require('express'),
-	open = require('open');
-	port = 8877,
-	sapui5 = '/QuickSurvey'
-	url = 'http://localhost:' + port + sapui5,// + "/latest";
-	year = 60 * 60 * 24 * 365 * 1000;
-	app = express();
+open = require('open');
+port = 8877,
+sapui5 = '/QuickSurvey'
+url = 'http://localhost:' + port + sapui5,// + "/latest";
+year = 60 * 60 * 24 * 365 * 1000;
+app = express();
+
+var bodyParser = require('body-parser')
+
 
 
 // Use compress middleware to gzip content
 app.use(express.compress());
 app.configure(function(){
 	app.use(express.logger('dev'));
-	app.use(express.bodyParser());
+	app.use( bodyParser.json() );       // to support JSON-encoded bodies
+	app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+		extended: true
+	}));
 });
 
 //set default mime type to xml for ".library" files

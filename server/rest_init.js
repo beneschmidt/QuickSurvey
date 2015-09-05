@@ -12,5 +12,9 @@ module.exports = {
 		app.get("/QuickSurvey/surveyList", function(req, res){
 			rest.getSurveyList(res, req, log);
 		});
+		app.post("/QuickSurvey/addNewSurvey", function(req, res){
+			log.info("Adding a new survey...");
+      rest.addNewSurvey(res, req, req.body.survey, log);
+		})
 	}
 }
