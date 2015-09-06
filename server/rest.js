@@ -7,207 +7,179 @@ module.exports = {
 	first: true,
 
 	getSurveyList : function(res, req, log){
-		this.log = log;
-		var that = this;
-
-		var pg = require('pg');
-
-		var conString = "postgres://quicksurvey:quicksurvey@localhost:5432/quicksurvey";
-		var oClient = new pg.Client(conString);
-		var table = "view_full_surveys";
-		var constraint;
-		this.result = [];
-		var dbutils = require("./dbutils.js");
-
-		oClient.connect(function(err) {
-			if(err) {
-				return that.log.error('could not connect to postgres', err);
+		var sql = "SELECT * FROM view_full_surveys";
+		var callback = function(result, error){
+			if(error){
+				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
+				res.end();
+			} else {
+				var dbutils = require("./dbutils.js");
+				var toSend = dbutils.extractFullSurveyList(result, log);
+				log.info(toSend.Survey.length);
+				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+				res.write(JSON.stringify(toSend) + "\n");
+				res.end();
 			}
-			oClient.query('BEGIN', function(err, result) {
-				if(err) {
-					that.log.error("BEGIN not working...");
-					return that.rollbackDB(oClient);
-				}
-				var select = 'SELECT * FROM '+table;
-				if(constraint){
-					select += ' ' +constraint;
-				}
-				var insertQuery = oClient.query(select);
-				insertQuery.on('row', function(row) {
-					that.result.push(row);
-				});
-				insertQuery.on('end', function(result) {
-					if(result.rowCount===0){
-						that.log.info("no "+table+" received!");
-						that.log.info(result);
-						oClient.end();
-					} else {
-						var toSend = dbutils.extractFullSurveyList(that.result, that.log);
-						that.log.info(toSend.Survey.length);
-
-						res.setHeader("Access-Control-Allow-Origin", "*");
-						res.writeHead(200, {'Content-Type': 'text/plain'});
-						res.write(JSON.stringify(toSend) + "\n");
-						res.end();
-						oClient.end();
-					}
-				});
-			});
-		});
+		}
+		this.executeSelectSQL(sql, [], log, callback);
 	},
 
 	getSurvey : function(req, res, log){
-		this.log = log;
-		var that = this;
-		var objectId = req.query.id;
-
-		var pg = require('pg');
-
-		var conString = "postgres://quicksurvey:quicksurvey@localhost:5432/quicksurvey";
-		var oClient = new pg.Client(conString);
-		var table = "view_full_surveys";
-		var constraint;
-		this.result = [];
-		var dbutils = require("./dbutils.js");
-
-		oClient.connect(function(err) {
-			if(err) {
-				return that.log.error('could not connect to postgres', err);
+		var params = [req.query.id];
+		var sql = "SELECT * FROM view_full_surveys WHERE sid = $1";
+		var callback = function(result, error){
+			if(error){
+				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
+				res.end();
+			} else {
+				var dbutils = require("./dbutils.js");
+				var toSend = dbutils.extractFullSurveyList(result, log);
+				log.info(toSend.Survey.length);
+				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+				res.write(JSON.stringify(toSend) + "\n");
+				res.end();
 			}
-			oClient.query('BEGIN', function(err, result) {
-				if(err) {
-					that.log.error("BEGIN not working...");
-					return that.rollbackDB(oClient);
-				}
-				var select = 'SELECT * FROM '+table + ' WHERE sid = '+objectId;
-				log.info(select);
-				if(constraint){
-					select += ' ' +constraint;
-				}
-				var insertQuery = oClient.query(select);
-				insertQuery.on('row', function(row) {
-					that.result.push(row);
-				});
-				insertQuery.on('end', function(result) {
-					if(result.rowCount===0){
-						that.log.info("no "+table+" received!");
-						that.log.info(result);
-						oClient.end();
-					} else {
-						var toSend = dbutils.extractFullSurveyList(that.result, that.log);
-						that.log.info(toSend.Survey.length);
-
-						res.writeHead(200, {'Content-Type': 'text/plain'});
-						res.write(JSON.stringify(toSend) + "\n");
-						res.end();
-						oClient.end();
-					}
-				});
-			});
-		});
+		}
+		this.executeSelectSQL(sql, params, log, callback);
 	},
 
 	addNewSurvey : function(res, req, body, log){
+		var params = [body.name, body.answersChangable];
+		var sql = "INSERT INTO survey (name, changeanswers) VALUES ($1, $2)";
+		var callback = function(sqlOK){
+			if(sqlOK){
+				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+				res.end();
+			} else {
+				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
+				res.end();
+			}
+		}
+		this.executeUpdateSQL(sql, params, log, callback);
+	},
+
+	deleteSurvey : function(res, req, survey, log){
+		var params = [survey.surveyId];
+		var sql = "DELETE FROM survey WHERE id = $1";
+		var callback = function(sqlOK){
+			if(sqlOK){
+				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+				res.end();
+			} else {
+				// empty 200 OK response for now
+				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
+				res.end();
+			}
+		}
+		this.executeUpdateSQL(sql, params, log, callback);
+	},
+
+	executeUpdateSQL : function(sql, params, log, callback){
 		this.log = log;
 		var that = this;
-		this.fs = require('fs');
-		// ALTERNATING FILES TO MAKE DIFFERENT RESULTS
-		this.first = !this.first;
-		var fileId = this.first?1:2;
-		var fileName = 'model/survey'+fileId+'.json';
-
-		var http = require('http');
 		var pg = require('pg');
 
 		var conString = "postgres://quicksurvey:quicksurvey@localhost:5432/quicksurvey";
 		var oClient = new pg.Client(conString);
-		var survey = "view_full_surveys";
+		this.result = [];
+		var dbutils = require("./dbutils.js");
+		log.info("SQL to execute "+sql);
+		this.callback = callback;
+
+		pg.connect(conString, function(err, client, done) {
+
+			var handleError = function(err) {
+				// no error occurred, continue with the request
+				if(!err) return false;
+				that.log.error(err);
+
+				// An error occurred, remove the client from the connection pool.
+				// A truthy value passed to done will remove the connection from the pool
+				// instead of simply returning it to be reused.
+				// In this case, if we have successfully received a client (truthy)
+				// then it will be removed from the pool.
+				if(client){
+					done(client);
+				}
+
+				return true;
+			};
+
+
+			// handle an error from the connection
+			if(handleError(err)) {
+				that.callback(false);
+				return;
+			};
+			// record the visit
+			client.query(sql, params, function(err, result) {
+				// handle an error from the query
+				if(handleError(err)) {
+					that.callback(false);
+					return;
+				};
+				// return the client to the connection pool for other requests to reuse
+				done();
+				that.callback(true);
+				return;
+			});
+		});
+	},
+
+	executeSelectSQL: function(select, params, log, callback){
+		this.log = log;
+		this.callback = callback;
+		var that = this;
+
+		var pg = require('pg');
+
+		var conString = "postgres://quicksurvey:quicksurvey@localhost:5432/quicksurvey";
+		var oClient = new pg.Client(conString);
 		var constraint;
 		this.result = [];
 		var dbutils = require("./dbutils.js");
 
 		oClient.connect(function(err) {
-			if(err) {
-				return that.log.error('could not connect to postgres', err);
-			}
-			oClient.query('BEGIN', function(err, result) {
+			var handleError = function(err) {
+				// no error occurred, continue with the request
+				if(!err) return false;
+				that.log.error(err);
 
-				if(err) {
-					that.log.error("BEGIN not working...");
-					return that.rollbackDB(oClient);
+				// An error occurred, remove the client from the connection pool.
+				// A truthy value passed to done will remove the connection from the pool
+				// instead of simply returning it to be reused.
+				// In this case, if we have successfully received a client (truthy)
+				// then it will be removed from the pool.
+				if(client){
+					done(client);
 				}
-				var insert = "INSERT INTO survey (name, changeanswers) VALUES ('"+body.name+"', "+body.answersChangable+")";
 
-				var insertQuery = oClient.query(insert);
-				insertQuery.on('row', function(row) {
-					that.result.push(row);
-				});
-				insertQuery.on('end', function(result) {
-					if(result.rowCount===0){
-						oClient.end();
-					} else {
-						oClient.query('COMMIT', oClient.end.bind(oClient));
-						// empty 200 OK response for now
-						res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-						res.end();
-					}
-				});
+				return true;
+			};
+
+
+			if(handleError(err)) {
+				that.callback(null, error);
+				return;
+			};
+
+			var query = oClient.query(select, params);
+			query.on('row', function(row) {
+				that.result.push(row);
+				that.log.info("RESULT: "+that.result);
+			});
+			query.on('end', function(result) {
+				if(result.rowCount===0){
+					that.log.info("no "+table+" received!");
+					that.log.info(result);
+					that.callback();
+					oClient.end();
+				} else {
+					that.log.info("RESULT: "+that.result);
+					oClient.end();
+					that.callback(that.result);
+				}
 			});
 		});
 	},
-
-	deleteSurvey : function(res, req, survey, log){
-		this.log = log;
-		var that = this;
-		var http = require('http');
-		var pg = require('pg');
-
-		var conString = "postgres://quicksurvey:quicksurvey@localhost:5432/quicksurvey";
-		var oClient = new pg.Client(conString);
-		this.result = [];
-		var dbutils = require("./dbutils.js");
-		log.info("SURVEY TO DELETE: "+survey.surveyId);
-
-		oClient.connect(function(err) {
-			if(err) {
-				return that.log.error('could not connect to postgres', err);
-			}
-			oClient.query('BEGIN', function(err, result) {
-				if(err) {
-					that.log.error("BEGIN not working...");
-					return that.rollbackDB(oClient);
-				};
-
-				var del = "DELETE FROM survey WHERE id = "+survey.surveyId;
-				var deleteQuery = oClient.query(del);
-				deleteQuery.on('row', function(row) {
-					that.result.push(row);
-				});
-				deleteQuery.on('end', function(result) {
-					if(result.rowCount===0){
-						oClient.end();
-					} else {
-						oClient.query('COMMIT', oClient.end.bind(oClient));
-						// empty 200 OK response for now
-						res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-						res.end();
-					}
-				});
-			});
-		});
-	},
-
-
-	/*this.fs.readFile(fileName, 'utf8', function (err,data) {
-	if (err) {
-	return console.log(err);
-}
-var json = JSON.parse(data);
-res.setHeader("Access-Control-Allow-Origin", "http://localhost:8877");
-log.info("write JSON: "+JSON.stringify(json));
-res.writeHead(200, {'Content-Type': 'text/plain'});
-res.write(JSON.stringify(json) + "\n");
-res.end();
-});*/
-
 }

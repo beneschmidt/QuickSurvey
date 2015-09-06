@@ -75,10 +75,6 @@ sap.ui.jsview("quicksurvey.view.ChangeSurvey", {
 			tooltip : "Delete survey",
 			press : function(ev) {
 				oController.deleteSurvey();
-				sap.ui.getCore().getEventBus().publish("nav", "to", {
-					id : "SurveyList"
-				});
-				//sap.ui.getCore().getEventBus().publish("nav", "back", {id : "Launchpad"});
 			}
 		});
 

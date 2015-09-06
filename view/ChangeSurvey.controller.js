@@ -78,6 +78,9 @@ sap.ui.controller("quicksurvey.view.ChangeSurvey", {
 			//	contentType: "application/json; charset=utf-8",
 			success: function (data) {
 				console.log("updated");
+				sap.ui.getCore().getEventBus().publish("nav", "to", {
+					id : "SurveyList"
+				});
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				if(jqXHR.readyState === 0){
@@ -85,6 +88,10 @@ sap.ui.controller("quicksurvey.view.ChangeSurvey", {
 				} else {
 					console.log("An unknown error occured: "+textStatus);
 				}
+
+				sap.ui.getCore().getEventBus().publish("nav", "to", {
+					id : "SurveyList"
+				});
 			},
 			data: { survey: survey }
 		});
@@ -105,6 +112,9 @@ sap.ui.controller("quicksurvey.view.ChangeSurvey", {
 			//	contentType: "application/json; charset=utf-8",
 			success: function (data) {
 				console.log("deleted");
+				sap.ui.getCore().getEventBus().publish("nav", "to", {
+					id : "SurveyList"
+				});
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				if(jqXHR.readyState === 0){
@@ -112,6 +122,9 @@ sap.ui.controller("quicksurvey.view.ChangeSurvey", {
 				} else {
 					console.log("An unknown error occured: "+textStatus);
 				}
+				sap.ui.getCore().getEventBus().publish("nav", "to", {
+					id : "SurveyList"
+				});
 			},
 			data: { survey: survey }
 		});

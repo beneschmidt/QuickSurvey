@@ -49,6 +49,9 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			//	contentType: "application/json; charset=utf-8",
 			success: function (data) {
 				controller.clearModel();
+				sap.ui.getCore().getEventBus().publish("nav", "to", {
+					id : "SurveyList"
+				});
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				if(jqXHR.readyState === 0){
@@ -57,6 +60,9 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 					console.log("An unknown error occured: "+textStatus);
 				}
 				controller.clearModel();
+				sap.ui.getCore().getEventBus().publish("nav", "to", {
+					id : "SurveyList"
+				});
 			},
 			data: { survey: survey }
 		});
