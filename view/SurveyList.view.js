@@ -9,7 +9,6 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
   createContent: function(oController) {
 
     var oListTemplate = new sap.m.StandardListItem({
-      title: "{name}",
       icon: "sap-icon://document-text",
       description: "{name}",
       type: "Active",
@@ -18,6 +17,21 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
         var object = {id : "ChangeSurvey", surveyId: this.getCustomData()[0].getProperty("value")};
         sap.ui.getCore().getEventBus().publish("nav", "to", object);
       },
+    });
+    oListTemplate.bindProperty("title", "name");
+    oListTemplate.bindProperty("info", "finished", function(finished) {
+      if (finished) {
+        return "Finished"
+      } else{
+        return "Not finished";
+      }
+    });
+    oListTemplate.bindProperty("infoState", "finished", function(finished) {
+      if (finished) {
+        return sap.ui.core.ValueState.Error;
+      } else{
+        return sap.ui.core.ValueState.Success;
+      }
     });
 
     var oList = new sap.m.List({});

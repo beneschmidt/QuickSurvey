@@ -39,9 +39,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		});
 
 		var oTitle = new sap.m.Input({
-			value : {
-				path : "input>/title"
-			}
+			vale: {path: "input>/title"}
 		});
 		var oTitleLabel = new sap.m.Label({
 			text : "Survey Title",

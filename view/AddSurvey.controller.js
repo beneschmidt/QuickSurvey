@@ -15,7 +15,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 
   updateModel: function(json){
     var model = new sap.ui.model.json.JSONModel(json);
-    this.getView().setModel(model);
+		this.getView().setModel(model, "input");
   },
 
 	clearModel: function(){
@@ -25,7 +25,6 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 		};
 
 		var model = new sap.ui.model.json.JSONModel(input);
-		sap.ui.getCore().setModel(model, "input");
 		this.getView().setModel(model, "input");
 	},
 
