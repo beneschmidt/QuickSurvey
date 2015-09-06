@@ -58,6 +58,21 @@ module.exports = {
 		this.executeUpdateSQL(sql, params, log, callback);
 	},
 
+	updateSurvey : function(res, req, body, log){
+		var params = [body.surveyId, body.name, body.answersChangable];
+		var sql = "UPDATE survey SET name = $2, changeanswers= $3   WHERE id = $1";
+		var callback = function(sqlOK){
+			if(sqlOK){
+				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+				res.end();
+			} else {
+				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
+				res.end();
+			}
+		}
+		this.executeUpdateSQL(sql, params, log, callback);
+	},
+
 	deleteSurvey : function(res, req, survey, log){
 		var params = [survey.surveyId];
 		var sql = "DELETE FROM survey WHERE id = $1";
@@ -166,7 +181,6 @@ module.exports = {
 			var query = oClient.query(select, params);
 			query.on('row', function(row) {
 				that.result.push(row);
-				that.log.info("RESULT: "+that.result);
 			});
 			query.on('end', function(result) {
 				if(result.rowCount===0){
@@ -175,7 +189,6 @@ module.exports = {
 					that.callback();
 					oClient.end();
 				} else {
-					that.log.info("RESULT: "+that.result);
 					oClient.end();
 					that.callback(that.result);
 				}

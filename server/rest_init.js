@@ -20,6 +20,10 @@ module.exports = {
 			log.info("Adding a new survey...");
       rest.addNewSurvey(res, req, req.body.survey, log);
 		});
+		app.post("/QuickSurvey/updateSurvey", function(req, res){
+			log.info("Updating survey...");
+      rest.updateSurvey(res, req, req.body.survey, log);
+		});
 		app.post("/QuickSurvey/deleteSurvey", function(req, res){
 			log.info("Deleting survey...");
       rest.deleteSurvey(res, req, req.body.survey, log);

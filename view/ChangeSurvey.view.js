@@ -84,10 +84,6 @@ sap.ui.jsview("quicksurvey.view.ChangeSurvey", {
 			tooltip : "Update survey",
 			press : function(ev) {
 				oController.updateSurvey();
-				sap.ui.getCore().getEventBus().publish("nav", "to", {
-					id : "SurveyList"
-				});
-				//sap.ui.getCore().getEventBus().publish("nav", "back", {id : "Launchpad"});
 			}
 		});
 
