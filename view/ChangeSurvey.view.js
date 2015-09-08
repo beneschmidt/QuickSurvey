@@ -50,8 +50,7 @@ sap.ui.jsview("quicksurvey.view.ChangeSurvey", {
 		oForm.addContent(oTitle);
 
 		var oChangeAnswers = new sap.m.ToggleButton({
-			text : "No",
-			pressed: false,
+			pressed: {path: "input>/answersChangable"},
 			press : function(evt){
 				if (evt.getSource().getPressed()){
 					this.getModel("input").setProperty("/answersChangable", true);
@@ -62,6 +61,13 @@ sap.ui.jsview("quicksurvey.view.ChangeSurvey", {
 				}
 			}
 		});
+		oChangeAnswers.bindProperty("text", "input>/answersChangable", function(changable) {
+      if (changable) {
+        return "Yes"
+      } else{
+        return "No";
+      }
+    });
 		var oChangeAnswersLabel = new sap.m.Label({
 			text : "Answers changable",
 			labelFor : oChangeAnswers
