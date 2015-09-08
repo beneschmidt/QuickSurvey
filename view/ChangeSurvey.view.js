@@ -62,12 +62,12 @@ sap.ui.jsview("quicksurvey.view.ChangeSurvey", {
 			}
 		});
 		oChangeAnswers.bindProperty("text", "input>/answersChangable", function(changable) {
-      if (changable) {
-        return "Yes"
-      } else{
-        return "No";
-      }
-    });
+			if (changable) {
+				return "Yes"
+			} else{
+				return "No";
+			}
+		});
 		var oChangeAnswersLabel = new sap.m.Label({
 			text : "Answers changable",
 			labelFor : oChangeAnswers

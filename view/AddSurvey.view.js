@@ -48,6 +48,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		oForm.addContent(oTitleLabel);
 		oForm.addContent(oTitle);
 
+		// change answers
 		var oChangeAnswers = new sap.m.ToggleButton({
 			text : "No",
 			pressed: false,
@@ -67,6 +68,37 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		});
 		oForm.addContent(oChangeAnswersLabel);
 		oForm.addContent(oChangeAnswers);
+
+		// add new question dialog
+		var listItemYesNo = new sap.m.StandardListItem({
+			title: "Yes/No"
+		});
+		var listItemGrades = new sap.m.StandardListItem({
+			title: "Grades (1-5)"
+		});
+		var oSelectDialog = new sap.m.SelectDialog("QuestionDialog", {
+			title: "Add new Question",
+			noDataText: "Nothing possible",
+			items : [listItemYesNo, listItemGrades],
+			confirm: function(evt){
+				console.log(evt.getParameters().selectedItems[0].getTitle());
+			}
+		});
+
+		var oSelectDialogLabel = new sap.m.Label({
+			text : "Add new Question",
+			labelFor : oSelectDialog
+		});
+		var oSelectDialogBtn = new sap.m.Button({
+			icon : "sap-icon://add",
+			visible : quicksurvey.app.config.LaunchpadMode,
+			tooltip : "Create new Question",
+			press : function(ev) {
+				oSelectDialog.open();
+			}
+		});
+		oForm.addContent(oSelectDialogLabel);
+		oForm.addContent(oSelectDialogBtn);
 
 		var oBtnNew = new sap.m.Button({
 			icon : "sap-icon://create",
