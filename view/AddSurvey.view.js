@@ -46,39 +46,56 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			}
 		});
 
-		var hor = new sap.ui.layout.HorizontalLayout();
-		hor.bindAggregation("content", "device>/isPhone", function(counter) {
-			if(counter===0){
-				return that.createForm();
-			} else {
-				return that.createForm();
-			}
-		});
 		var page =  new sap.m.Page({
 			title : "Add Survey",
 			showNavButton: "{device>/isPhone}",
 			navButtonPress: [oController.doNavBack, oController],
 			headerContent: [oBtnLaunchpad],
-			content: hor,
 			footer: bar
 		});
 		this.page = page;
 		return page;
 	},
 
+	nextView : function(){
+		var model = this.getModel("counter");
+		model.setProperty("/counter", model.getProperty("/counter")+1);
+		console.log(model.getProperty("/counter"));
+		sap.ui.getCore().getEventBus().publish("nav", "to", {
+			id : "AddSurvey"
+		});
+	},
+
 	getCurrentForm:function(){
 		if(this.getModel("counter")){
-			var currentCounter = this.getModel("counter").getProperty("counter");
-			if(currentCounter === 0){
-				return this.createForm();
+			var currentCounter = this.getModel("counter").getProperty("/counter");
+			if(currentCounter === -1){
+				return this.createTitleForm();
 			} else {
-				return this.createForm();
+				return this.createFormForType(this.getModel("survey").getProperty("/questions/"+currentCounter+"/type"));
+			}
+		}
+	},
+
+	createFormForType:function(type, position){
+		// type 1: ja/nein
+		// type 2: grades
+		switch(type){
+			case 1: {
+				console.log("here we go: "+type)
+				// create yes/no
+			}
+			case 2: {
+				// create grades
+			}
+			default: {
+				// not sure
 			}
 		}
 	},
 
 	// can't be in renderer
-	createForm: function(){
+	createTitleForm: function(){
 		var oForm = new sap.ui.layout.form.SimpleForm({
 			maxContainerCols: 2,
 			editable        : true,
@@ -125,19 +142,39 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		oForm.addContent(oChangeAnswersLabel);
 		oForm.addContent(oChangeAnswers);
 
+		var selectCombo = this.createSelectDialogCombo();
+		oForm.addContent(selectCombo.label);
+		oForm.addContent(selectCombo.button);
+		return oForm;
+	},
+
+	createSelectDialogCombo: function(){
+		var that = this;
 		// add new question dialog
 		var listItemYesNo = new sap.m.StandardListItem({
-			title: "Yes/No"
+			title: "Yes/No",
+			customData:[new sap.ui.core.CustomData({key: "type", value: 1})]
 		});
 		var listItemGrades = new sap.m.StandardListItem({
-			title: "Grades (1-5)"
+			title: "Grades (1-5)",
+			customData:[new sap.ui.core.CustomData({key: "type", value: 2})]
 		});
-		var oSelectDialog = new sap.m.SelectDialog("QuestionDialog", {
+		var oSelectDialog = new sap.m.SelectDialog({
 			title: "Add new Question",
 			noDataText: "Nothing possible",
 			items : [listItemYesNo, listItemGrades],
 			confirm: function(evt){
-				console.log(evt.getParameters().selectedItems[0].getTitle());
+				var nextCounter = that.getModel("counter").getProperty("/counter")+1;
+				var type =evt.getParameters().selectedItems[0].getCustomData()[0].getProperty("value");
+				console.log(evt.getParameters().selectedItems[0].getTitle()+", "+type);
+				var question = {
+					type: type,
+					questiontitle: "",
+					answers: []
+				}
+				that.getModel("survey").setProperty("/questions/"+nextCounter, question);
+				console.log(that.getModel("survey").getProperty("/questions/"+nextCounter+"/type"));
+				that.nextView();
 			}
 		});
 
@@ -153,9 +190,12 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 				oSelectDialog.open();
 			}
 		});
-		oForm.addContent(oSelectDialogLabel);
-		oForm.addContent(oSelectDialogBtn);
-		return oForm;
+
+		var object = {
+			button: oSelectDialogBtn,
+			label: oSelectDialogLabel
+		}
+		return object;
 	},
 
 });

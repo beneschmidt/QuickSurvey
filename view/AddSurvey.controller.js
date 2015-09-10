@@ -18,7 +18,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			// update content
 			if(this.getView().page){
 				this.getView().page.removeAllContent();
-				this.getView().page.addContent(this.getView().getCurrentForm());
+				this.getView().page.addContent(this.getView().getCurrentForm(data.type));
 			}
 		}
 	},
@@ -35,24 +35,22 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 		this.getView().rerender();
 	},
 
-	nextView : function(){
-		var model = this.getView().getModel("counter");
-		model.setProperty("counter", model.getProperty("/counter")+1);
-		console.log(model.getProperty("/counter"));
-		this.getView().rerender();
-	},
-
 	clearModel: function(){
 		var input = {
-			title   : "",
-			answersChangable   : false
+			title   : "test",
+			answersChangable   : false,
+			questions: [{
+				type: 1,
+				questiontext: "who is this pokemon"
+			}]
 		};
 
 		var model = new sap.ui.model.json.JSONModel(input);
 		this.getView().setModel(model, "survey");
+		sap.ui.getCore().setModel(model, "survey");
 
 		var counter = {
-			counter: 0
+			counter: -1
 		}
 
 		var counterModel = new sap.ui.model.json.JSONModel(counter);
