@@ -9,23 +9,54 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 		jQuery.sap.require("sap.ui.model.json.JSONModel");
 		this.clearModel();
 
-		//this.getView().setModel(new sap.ui.model.json.JSONModel("model/coffee.json"), "coffee");
 		this.bus = sap.ui.getCore().getEventBus();
+		this.bus.subscribe("nav", "to", this.navHandler, this);
 	},
 
-  updateModel: function(json){
-    var model = new sap.ui.model.json.JSONModel(json);
+	navHandler: function(channelId, eventId, data){
+		if (eventId === "to" && data.id==="AddSurvey") {
+			// update content
+			if(this.getView().page){
+				this.getView().page.removeAllContent();
+				this.getView().page.addContent(this.getView().getCurrentForm());
+			}
+		}
+	},
+
+	updateModel: function(json){
+		var model = new sap.ui.model.json.JSONModel(json);
 		this.getView().setModel(model, "input");
-  },
+	},
+
+	prevView : function(){
+		var model = this.getView().getModel("counter");
+		model.setProperty("counter", model.getProperty("/counter")-1);
+		console.log(model.getProperty("/counter"));
+		this.getView().rerender();
+	},
+
+	nextView : function(){
+		var model = this.getView().getModel("counter");
+		model.setProperty("counter", model.getProperty("/counter")+1);
+		console.log(model.getProperty("/counter"));
+		this.getView().rerender();
+	},
 
 	clearModel: function(){
 		var input = {
 			title   : "",
-			answersChangable   : false,
+			answersChangable   : false
 		};
 
 		var model = new sap.ui.model.json.JSONModel(input);
-		this.getView().setModel(model, "input");
+		this.getView().setModel(model, "survey");
+
+		var counter = {
+			counter: 0
+		}
+
+		var counterModel = new sap.ui.model.json.JSONModel(counter);
+		sap.ui.getCore().setModel(counterModel, "counter");
 	},
 
 	doNavBack: function(event) {
@@ -34,7 +65,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 
 	addSurvey: function(event){
 		var controller = this;
-		var model = this.getView().getModel("input");
+		var model = this.getView().getModel("survey");
 		console.log(model);
 		var that= this;
 		var survey = {

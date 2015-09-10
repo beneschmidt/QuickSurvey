@@ -1,4 +1,5 @@
 jQuery.sap.require("quicksurvey.app.config");
+jQuery.sap.require("quicksurvey.view.TitleForm");
 
 sap.ui.jsview("quicksurvey.view.SurveyList", {
 

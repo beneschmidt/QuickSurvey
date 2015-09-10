@@ -63,8 +63,8 @@ sap.ui.jsview("quicksurvey.view.App", {
         }
         this.app.addDetailPage(sap.ui.xmlview("Info", "quicksurvey.view.Info"));
         this.app.addDetailPage(sap.ui.jsview("NewFeatures-v122", "quicksurvey.view.NewFeatures-v122"));
-        this.app.addDetailPage(sap.ui.jsview("AddSurvey", "quicksurvey.view.AddSurvey"));
         this.app.addDetailPage(sap.ui.jsview("SurveyList", "quicksurvey.view.SurveyList"));
+        this.app.addDetailPage(sap.ui.jsview("AddSurvey", "quicksurvey.view.AddSurvey"));
         this.app.addDetailPage(sap.ui.jsview("ChangeSurvey", "quicksurvey.view.ChangeSurvey"));
 
         // navigate to the first page in both master and detail areas.

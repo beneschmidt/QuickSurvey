@@ -15,6 +15,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		return "quicksurvey.view.AddSurvey";
 	},
 
+
 	/**
 	* Is initially called once after the Controller has been instantiated. It
 	* is the place where the UI is constructed. Since the Controller is given
@@ -24,7 +25,60 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 	*/
 	createContent : function(oController) {
 		var that = this;
+		var oBtnNew = new sap.m.Button({
+			icon : "sap-icon://create",
+			visible : quicksurvey.app.config.LaunchpadMode,
+			tooltip : "Create a new survey",
+			press : function(ev) {
+				oController.addSurvey();
+			}
+		});
 
+		var bar = new sap.m.Bar({});
+		bar.addContentRight(oBtnNew);
+
+		var oBtnLaunchpad = new sap.m.Button({
+			icon : "sap-icon://home",
+			visible : quicksurvey.app.config.LaunchpadMode,
+			tooltip : "Back to Survey List",
+			press : function(ev) {
+				sap.ui.getCore().getEventBus().publish("nav", "to", {id : "SurveyList"});
+			}
+		});
+
+		var hor = new sap.ui.layout.HorizontalLayout();
+		hor.bindAggregation("content", "device>/isPhone", function(counter) {
+			if(counter===0){
+				return that.createForm();
+			} else {
+				return that.createForm();
+			}
+		});
+		var page =  new sap.m.Page({
+			title : "Add Survey",
+			showNavButton: "{device>/isPhone}",
+			navButtonPress: [oController.doNavBack, oController],
+			headerContent: [oBtnLaunchpad],
+			content: hor,
+			footer: bar
+		});
+		this.page = page;
+		return page;
+	},
+
+	getCurrentForm:function(){
+		if(this.getModel("counter")){
+			var currentCounter = this.getModel("counter").getProperty("counter");
+			if(currentCounter === 0){
+				return this.createForm();
+			} else {
+				return this.createForm();
+			}
+		}
+	},
+
+	// can't be in renderer
+	createForm: function(){
 		var oForm = new sap.ui.layout.form.SimpleForm({
 			maxContainerCols: 2,
 			editable        : true,
@@ -37,9 +91,10 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			columnsL   : 1,
 			columnsM   : 1
 		});
-
 		var oTitle = new sap.m.Input({
-			vale: {path: "input>/title"}
+			value: {
+				path: "survey>/title"
+			}
 		});
 		var oTitleLabel = new sap.m.Label({
 			text : "Survey Title",
@@ -47,6 +102,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		});
 		oForm.addContent(oTitleLabel);
 		oForm.addContent(oTitle);
+		var that = this;
 
 		// change answers
 		var oChangeAnswers = new sap.m.ToggleButton({
@@ -54,10 +110,10 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			pressed: false,
 			press : function(evt){
 				if (evt.getSource().getPressed()){
-					this.getModel("input").setProperty("/answersChangable", true);
+					that.getModel("survey").setProperty("/answersChangable", true);
 					oChangeAnswers.setText("Yes");
 				} else {
-					this.getModel("input").setProperty("/answersChangable", false);
+					that.getModel("survey").setProperty("/answersChangable", false);
 					oChangeAnswers.setText("No");
 				}
 			}
@@ -99,80 +155,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		});
 		oForm.addContent(oSelectDialogLabel);
 		oForm.addContent(oSelectDialogBtn);
-
-		var oBtnNew = new sap.m.Button({
-			icon : "sap-icon://create",
-			visible : quicksurvey.app.config.LaunchpadMode,
-			tooltip : "Create a new survey",
-			press : function(ev) {
-				oController.addSurvey();
-			}
-		});
-
-		var bar = new sap.m.Bar({});
-		bar.addContentRight(oBtnNew);
-
-		var oBtnLaunchpad = new sap.m.Button({
-			icon : "sap-icon://home",
-			visible : quicksurvey.app.config.LaunchpadMode,
-			tooltip : "Back to Survey List",
-			press : function(ev) {
-				sap.ui.getCore().getEventBus().publish("nav", "to", {id : "SurveyList"});
-			}
-		});
-
-
-		return new sap.m.Page({
-			title : "Add Survey",
-			showNavButton: "{device>/isPhone}",
-			navButtonPress: [oController.doNavBack, oController],
-			content : [ oForm ],
-			headerContent: [oBtnLaunchpad],
-			footer: bar
-		});
-	}
-
-	/*var oMultiComboBox = new sap.m.MultiComboBox({
-	items: {
-	path: "coffee>/Coffee", template: new sap.ui.core.Item({
-	key: "{coffee>name}",
-	text: "{coffee>name}"
-})
-}
-});
-var oMultiComboBoxLabel = new sap.m.Label({
-text : "NEW MulitComboBox Control",
-labelFor : oMultiComboBox
-});
-oForm2.addContent(oMultiComboBoxLabel);
-oForm2.addContent(oMultiComboBox);
-
-var oMultiInput = new sap.m.MultiInput();
-oMultiInput.addValidator(function(args){
-var text = args.text;
-return new sap.m.Token({key: text, text: text});
-});
-var oMultiInputLabel = new sap.m.Label({
-text : "NEW MulitInput Control",
-labelFor : oMultiInput
-});
-
-oForm2.addContent(oMultiInputLabel);
-oForm2.addContent(oMultiInput);
-*/
-/*
-var oIconTabBar = new sap.m.IconTabBar({
-items: [
-new sap.m.IconTabFilter({
-text: "Date Input Controls",
-content : [oForm]
-}),
-new sap.m.IconTabFilter({
-text: "Other Input Controls",
-content : [oForm2]
-})
-]
-});
-*/
+		return oForm;
+	},
 
 });
