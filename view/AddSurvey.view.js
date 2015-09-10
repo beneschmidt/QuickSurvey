@@ -25,17 +25,6 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 	*/
 	createContent : function(oController) {
 		var that = this;
-		var oBtnNew = new sap.m.Button({
-			icon : "sap-icon://create",
-			visible : quicksurvey.app.config.LaunchpadMode,
-			tooltip : "Create a new survey",
-			press : function(ev) {
-				oController.addSurvey();
-			}
-		});
-
-		var bar = new sap.m.Bar({});
-		bar.addContentRight(oBtnNew);
 
 		var oBtnLaunchpad = new sap.m.Button({
 			icon : "sap-icon://home",
@@ -45,13 +34,11 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 				sap.ui.getCore().getEventBus().publish("nav", "to", {id : "SurveyList"});
 			}
 		});
-
 		var page =  new sap.m.Page({
 			title : "Add Survey",
 			showNavButton: "{device>/isPhone}",
-			navButtonPress: [oController.doNavBack, oController],
-			headerContent: [oBtnLaunchpad],
-			footer: bar
+			headerContent:[oBtnLaunchpad],
+			navButtonPress: [oController.doNavBack, oController]
 		});
 		this.page = page;
 		return page;
@@ -84,6 +71,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			case 1: {
 				console.log("here we go: "+type)
 				// create yes/no
+				return this.createYesNoForm();
 			}
 			case 2: {
 				// create grades
@@ -148,16 +136,50 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		return oForm;
 	},
 
+	createYesNoForm: function(){
+		var oForm = new sap.ui.layout.form.SimpleForm({
+			maxContainerCols: 2,
+			editable        : true,
+			layout          : "ResponsiveGridLayout",
+			//title           : "Date Controls",
+			labelSpanL : 4,
+			labelSpanM : 4,
+			emptySpanL : 1,
+			emptySpanM : 1,
+			columnsL   : 1,
+			columnsM   : 1
+		});
+		var oTitleLabel = new sap.m.Label({
+			text : "Yes/No question",
+		});
+		oForm.addContent(oTitleLabel);
+		var currentCounter = this.getModel("counter").getProperty("/counter");
+		var oQuestionText = new sap.m.Input({
+			value: {
+				path: "survey>/questions/"+currentCounter+"/questiontext"
+			}
+		});
+		var oQuestionTextLabel = new sap.m.Label({
+			text : "Question text",
+			labelFor : oQuestionText
+		});
+		oForm.addContent(oQuestionTextLabel);
+		oForm.addContent(oQuestionText);
+		var that = this;
+
+		return oForm;
+	},
+
 	createSelectDialogCombo: function(){
 		var that = this;
 		// add new question dialog
 		var listItemYesNo = new sap.m.StandardListItem({
 			title: "Yes/No",
-			customData:[new sap.ui.core.CustomData({key: "type", value: 1})]
+			customData:[new sap.ui.core.CustomData({key: "type", value: 1}), new sap.ui.core.CustomData({key: "multiple", value: false})]
 		});
 		var listItemGrades = new sap.m.StandardListItem({
 			title: "Grades (1-5)",
-			customData:[new sap.ui.core.CustomData({key: "type", value: 2})]
+			customData:[new sap.ui.core.CustomData({key: "type", value: 2}), new sap.ui.core.CustomData({key: "multiple", value: false})]
 		});
 		var oSelectDialog = new sap.m.SelectDialog({
 			title: "Add new Question",
@@ -166,10 +188,12 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			confirm: function(evt){
 				var nextCounter = that.getModel("counter").getProperty("/counter")+1;
 				var type =evt.getParameters().selectedItems[0].getCustomData()[0].getProperty("value");
+				var multiple = evt.getParameters().selectedItems[0].getCustomData()[1].getProperty("value");
 				console.log(evt.getParameters().selectedItems[0].getTitle()+", "+type);
 				var question = {
 					type: type,
-					questiontitle: "",
+					questiontext: "",
+					multiple: multiple,
 					answers: []
 				}
 				that.getModel("survey").setProperty("/questions/"+nextCounter, question);

@@ -19,6 +19,21 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			if(this.getView().page){
 				this.getView().page.removeAllContent();
 				this.getView().page.addContent(this.getView().getCurrentForm(data.type));
+
+				var oController = this;
+
+				var oBtnNew = new sap.m.Button({
+					icon : "sap-icon://create",
+					visible : quicksurvey.app.config.LaunchpadMode,
+					tooltip : "Create a new survey",
+					press : function(ev) {
+						oController.addSurvey();
+					}
+				});
+				var bar = new sap.m.Bar({});
+				bar.addContentRight(oBtnNew);
+
+				this.getView().page.setFooter(bar);
 			}
 		}
 	},
@@ -68,7 +83,8 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 		var that= this;
 		var survey = {
 			name : model.getProperty("/title"),
-			answersChangable : model.getProperty("/answersChangable")
+			answersChangable : model.getProperty("/answersChangable"),
+			questions: model.getProperty("/questions")
 		};
 
 		$.ajax({

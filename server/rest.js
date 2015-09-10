@@ -7,6 +7,7 @@ module.exports = {
 	first: true,
 
 	getSurveyList : function(res, req, log){
+		var dbutils = require("./dbutils.js");
 		var sql = "SELECT * FROM view_full_surveys";
 		var callback = function(result, error){
 			if(error){
@@ -21,10 +22,11 @@ module.exports = {
 				res.end();
 			}
 		}
-		this.executeSelectSQL(sql, [], log, callback);
+		dbutils.executeSelectSQL(sql, [], log, callback);
 	},
 
 	getSurvey : function(req, res, log){
+		var dbutils = require("./dbutils.js");
 		var params = [req.query.id];
 		var sql = "SELECT * FROM view_full_surveys WHERE sid = $1";
 		var callback = function(result, error){
@@ -32,7 +34,6 @@ module.exports = {
 				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
 				res.end();
 			} else {
-				var dbutils = require("./dbutils.js");
 				var toSend = dbutils.extractFullSurveyList(result, log);
 				log.info(toSend.Survey.length);
 				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
@@ -40,25 +41,74 @@ module.exports = {
 				res.end();
 			}
 		}
-		this.executeSelectSQL(sql, params, log, callback);
+		dbutils.executeSelectSQL(sql, params, log, callback);
+	},
+
+	getNextSurveyId : function(callback, log){
+		var dbutils = require("./dbutils.js");
+		var surveyCallback = function(id){
+			callback(id);
+		}
+		dbutils.getNextId(surveyCallback, "survey", log);
+	},
+
+	getMaxIds:function(callback, log){
+		var dbutils = require("./dbutils.js");
+		var sql = "SELECT MAX(sid) AS sid, MAX(qid) AS qid, MAX(aid) AS aid FROM view_full_surveys";
+		var idCallback = function(result){
+			callback(result[0]);
+		}
+		dbutils.executeSelectSQL(sql, [], log, idCallback);
+	},
+
+
+	addQuestionInsert: function(startInt, question){
+		return  "INSERT INTO question (id, questiontext, mutliple, survey_id) VALUES ($"+startInt+", $"+(startInt+1)+", $"+(startInt+2)+", $"+(startInt+3)+");";
 	},
 
 	addNewSurvey : function(res, req, body, log){
-		var params = [body.name, body.answersChangable];
-		var sql = "INSERT INTO survey (name, changeanswers) VALUES ($1, $2)";
-		var callback = function(sqlOK){
-			if(sqlOK){
-				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-				res.end();
-			} else {
-				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
-				res.end();
+		var dbutils = require("./dbutils.js");
+		var that = this;
+		var nextSurveyCallback = function(object){
+			log.info("maxIds = "+object.sid+", "+object.qid+", "+object.aid);
+			var nextSid = object.sid+1;
+			var nextQid = object.qid+1;
+			var nextAid = object.aid+1;
+			var paramsArray = [];
+			var sqlArray =[];
+			var insertSurveyParams = [nextSid, body.name, body.answersChangable];
+			var insertSurvey = "INSERT INTO survey (id, name, changeanswers) VALUES ($1, $2, $3);";
+			sqlArray.push(insertSurvey);
+			paramsArray.push(insertSurveyParams);
+			if(body.questions){
+				log.info("yes, I have questions");
+				for(var i = 0; i < body.questions.length; i++){
+					var next = i*3 + 3;
+					var q = body.questions[i];
+					var insertQuestion="INSERT INTO question (id, questiontext, multiple, type, survey_id) VALUES ($1, $2, $3, $4, $5);";
+					sqlArray.push(insertQuestion);
+					var questionParams = [nextQid, q.questiontext, q.multiple,q.type, nextSid];
+					paramsArray.push(questionParams);
+				}
 			}
+			var insertSurveyCallback = function(sqlOK){
+				if(sqlOK){
+					//this.executeUpdateSQL(sql, params, log, callback);
+					res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+					res.end();
+				} else {
+					log.error("Error at inserting multiple stuff: "+sqlOK);
+					res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
+					res.end();
+				}
+			}
+			dbutils.executeUpdateMultipleSQL(sqlArray, paramsArray, log, insertSurveyCallback);
 		}
-		this.executeUpdateSQL(sql, params, log, callback);
+		this.getMaxIds(nextSurveyCallback, log);
 	},
 
 	updateSurvey : function(res, req, body, log){
+		var dbutils = require("./dbutils.js");
 		var params = [body.surveyId, body.name, body.answersChangable];
 		var sql = "UPDATE survey SET name = $2, changeanswers= $3   WHERE id = $1";
 		var callback = function(sqlOK){
@@ -70,10 +120,11 @@ module.exports = {
 				res.end();
 			}
 		}
-		this.executeUpdateSQL(sql, params, log, callback);
+		dbutils.executeUpdateSQL(sql, params, log, callback);
 	},
 
 	deleteSurvey : function(res, req, survey, log){
+		var dbutils = require("./dbutils.js");
 		var params = [survey.surveyId];
 		var sql = "DELETE FROM survey WHERE id = $1";
 		var callback = function(sqlOK){
@@ -86,113 +137,6 @@ module.exports = {
 				res.end();
 			}
 		}
-		this.executeUpdateSQL(sql, params, log, callback);
-	},
-
-	executeUpdateSQL : function(sql, params, log, callback){
-		this.log = log;
-		var that = this;
-		var pg = require('pg');
-
-		var conString = "postgres://quicksurvey:quicksurvey@localhost:5432/quicksurvey";
-		var oClient = new pg.Client(conString);
-		this.result = [];
-		var dbutils = require("./dbutils.js");
-		log.info("SQL to execute "+sql);
-		this.callback = callback;
-
-		pg.connect(conString, function(err, client, done) {
-
-			var handleError = function(err) {
-				// no error occurred, continue with the request
-				if(!err) return false;
-				that.log.error(err);
-
-				// An error occurred, remove the client from the connection pool.
-				// A truthy value passed to done will remove the connection from the pool
-				// instead of simply returning it to be reused.
-				// In this case, if we have successfully received a client (truthy)
-				// then it will be removed from the pool.
-				if(client){
-					done(client);
-				}
-
-				return true;
-			};
-
-
-			// handle an error from the connection
-			if(handleError(err)) {
-				that.callback(false);
-				return;
-			};
-			// record the visit
-			client.query(sql, params, function(err, result) {
-				// handle an error from the query
-				if(handleError(err)) {
-					that.callback(false);
-					return;
-				};
-				// return the client to the connection pool for other requests to reuse
-				done();
-				that.callback(true);
-				return;
-			});
-		});
-	},
-
-	executeSelectSQL: function(select, params, log, callback){
-		this.log = log;
-		this.callback = callback;
-		var that = this;
-
-		var pg = require('pg');
-
-		var conString = "postgres://quicksurvey:quicksurvey@localhost:5432/quicksurvey";
-		var oClient = new pg.Client(conString);
-		var constraint;
-		this.result = [];
-		var dbutils = require("./dbutils.js");
-
-		oClient.connect(function(err) {
-			var handleError = function(err) {
-				// no error occurred, continue with the request
-				if(!err) return false;
-				that.log.error(err);
-
-				// An error occurred, remove the client from the connection pool.
-				// A truthy value passed to done will remove the connection from the pool
-				// instead of simply returning it to be reused.
-				// In this case, if we have successfully received a client (truthy)
-				// then it will be removed from the pool.
-				if(client){
-					done(client);
-				}
-
-				return true;
-			};
-
-
-			if(handleError(err)) {
-				that.callback(null, error);
-				return;
-			};
-
-			var query = oClient.query(select, params);
-			query.on('row', function(row) {
-				that.result.push(row);
-			});
-			query.on('end', function(result) {
-				if(result.rowCount===0){
-					that.log.info("no "+table+" received!");
-					that.log.info(result);
-					that.callback();
-					oClient.end();
-				} else {
-					oClient.end();
-					that.callback(that.result);
-				}
-			});
-		});
+		dbutils.executeUpdateSQL(sql, params, log, callback);
 	},
 }
