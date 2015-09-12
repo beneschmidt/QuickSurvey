@@ -15,8 +15,12 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 
 	navHandler: function(channelId, eventId, data){
 		if (eventId === "to" && data.id==="AddSurvey") {
-			// update content
+			if(data.isNew){
+				this.clearModel();
+			}
+
 			if(this.getView().page){
+			// update content
 				this.getView().page.removeAllContent();
 				var form = this.getView().getCurrentForm(data.type);
 				var selectCombo = this.getView().createSelectDialogCombo();

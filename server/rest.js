@@ -86,6 +86,7 @@ module.exports = {
 					var q = body.questions[i];
 					var insertQuestion="INSERT INTO question (id, questiontext, multiple, type, survey_id) VALUES ($1, $2, $3, $4, $5);";
 					log.info("Question: "+q.questiontext);
+					sqlArray.push(insertQuestion);
 					var questionParams = [nextQid, q.questiontext, q.multiple,q.type, nextSid];
 					paramsArray.push(questionParams);
 					for(var j = 0; j < q.answers.length; j++){

@@ -44,7 +44,8 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
       tooltip : "Create a new survey",
       press : function(ev) {
         sap.ui.getCore().getEventBus().publish("nav", "to", {
-          id : "AddSurvey"
+          id : "AddSurvey",
+          isNew: true
         });
         //sap.ui.getCore().getEventBus().publish("nav", "back", {id : "Launchpad"});
       }

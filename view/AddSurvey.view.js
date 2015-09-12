@@ -47,7 +47,6 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 	nextView : function(){
 		var model = this.getModel("counter");
 		model.setProperty("/counter", model.getProperty("/counter")+1);
-		console.log(model.getProperty("/counter"));
 		sap.ui.getCore().getEventBus().publish("nav", "to", {
 			id : "AddSurvey"
 		});
@@ -69,11 +68,11 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		// type 2: grades
 		switch(type){
 			case 1: {
-				return this.createYesNoForm();
+				return this.createQuestionForm("Yes/No question");
 			}
 			case 2: {
 				// create grades
-				return this.createGradesForm();
+				return this.createQuestionForm("Grades question");
 			}
 			default: {
 				// not sure
@@ -176,10 +175,10 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		return oForm;
 	},
 
-	createGradesForm: function(){
+	createQuestionForm: function(title){
 		var oForm = this.createForm();
 		var oTitleLabel = new sap.m.Label({
-			text : "Grades question",
+			text : title,
 		});
 		oForm.addContent(oTitleLabel);
 		var currentCounter = this.getModel("counter").getProperty("/counter");
@@ -188,6 +187,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 				path: "survey>/questions/"+currentCounter+"/questiontext"
 			}
 		});
+
 		var oQuestionTextLabel = new sap.m.Label({
 			text : "Question text",
 			labelFor : oQuestionText
@@ -195,17 +195,13 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		oForm.addContent(oQuestionTextLabel);
 		oForm.addContent(oQuestionText);
 
-		var oListTemplate = new sap.m.StandardListItem({
-			title: "Test",
-			description: "{answertext}",
+		var oAnswerList = new sap.m.ListBase();
+		oAnswerList.bindAggregation("items", "survey>/questions/"+currentCounter+"/answers", function(sId, oContext) {
+			var value = oContext.getProperty("answertext");
+			return new sap.m.StandardListItem({
+				title: value,
+			});
 		});
-		var oAnswerList = new sap.m.List({
-			items: {
-				path: "survey>/questions/"+currentCounter+"/answers",
-				template: oListTemplate
-			}
-		});
-		console.log(this.getModel("survey").getProperty("/questions/"+currentCounter));
 		var oAnswersLabel = new sap.m.Label({
 			text : "Answers",
 			labelFor : oAnswerList
@@ -229,8 +225,8 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			title: "Grades (1-5)",
 			customData:[new sap.ui.core.CustomData({key: "type", value: 2}),
 			new sap.ui.core.CustomData({key: "multiple", value: false}),
-			//new sap.ui.core.CustomData({key: "items", value: [{answertext: "1"},{answertext:"2"},{answertext:"3"},{answertext:"4"},{answertext:"5"}]})]
-			new sap.ui.core.CustomData({key: "items", value: [{answertext: "one"},{answertext:"two"}]})]
+			new sap.ui.core.CustomData({key: "items", value: [{answertext: "1"},{answertext:"2"},{answertext:"3"},{answertext:"4"},{answertext:"5"}]})]
+			//new sap.ui.core.CustomData({key: "items", value: [{test: "0",answertext: "one"},{test: "1",answertext:"two"}]})]
 		});
 		var oSelectDialog = new sap.m.SelectDialog({
 			title: "Add new Question",
@@ -244,7 +240,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 				var items = customData[2].getProperty("value");
 				var question = {
 					type: type,
-					questiontext: "text",
+					questiontext: "",
 					multiple: multiple,
 					answers: items
 				}
