@@ -31,7 +31,7 @@ module.exports = {
       } else {
         objects[spos].questions[qpos].answers.push({
           objectId: current.aid,
-          text : current.text
+          answertext : current.answertext
         });
       }
     }

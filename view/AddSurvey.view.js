@@ -53,7 +53,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		});
 	},
 
-	getCurrentForm:function(){
+	getCurrentForm : function(){
 		if(this.getModel("counter")){
 			var currentCounter = this.getModel("counter").getProperty("/counter");
 			if(currentCounter === -1){
@@ -69,12 +69,11 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		// type 2: grades
 		switch(type){
 			case 1: {
-				console.log("here we go: "+type)
-				// create yes/no
 				return this.createYesNoForm();
 			}
 			case 2: {
 				// create grades
+				return this.createGradesForm();
 			}
 			default: {
 				// not sure
@@ -82,9 +81,8 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		}
 	},
 
-	// can't be in renderer
-	createTitleForm: function(){
-		var oForm = new sap.ui.layout.form.SimpleForm({
+	createForm: function(){
+		return new sap.ui.layout.form.SimpleForm({
 			maxContainerCols: 2,
 			editable        : true,
 			layout          : "ResponsiveGridLayout",
@@ -96,6 +94,11 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			columnsL   : 1,
 			columnsM   : 1
 		});
+	},
+
+	// can't be in renderer
+	createTitleForm: function(){
+		var oForm = this.createForm();
 		var oTitle = new sap.m.Input({
 			value: {
 				path: "survey>/title"
@@ -130,25 +133,11 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		oForm.addContent(oChangeAnswersLabel);
 		oForm.addContent(oChangeAnswers);
 
-		var selectCombo = this.createSelectDialogCombo();
-		oForm.addContent(selectCombo.label);
-		oForm.addContent(selectCombo.button);
 		return oForm;
 	},
 
 	createYesNoForm: function(){
-		var oForm = new sap.ui.layout.form.SimpleForm({
-			maxContainerCols: 2,
-			editable        : true,
-			layout          : "ResponsiveGridLayout",
-			//title           : "Date Controls",
-			labelSpanL : 4,
-			labelSpanM : 4,
-			emptySpanL : 1,
-			emptySpanM : 1,
-			columnsL   : 1,
-			columnsM   : 1
-		});
+		var oForm = this.createForm();
 		var oTitleLabel = new sap.m.Label({
 			text : "Yes/No question",
 		});
@@ -167,6 +156,63 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		oForm.addContent(oQuestionText);
 		var that = this;
 
+		var oYesItem = new sap.m.StandardListItem({
+			title: "Yes"
+		});
+		var oNoItem = new sap.m.StandardListItem({
+			title: "No"
+		});
+		var oAnswerList = new sap.m.List({
+			mode: sap.m.ListMode.None,
+			items: [oYesItem, oNoItem]
+		});
+		var oAnswersLabel = new sap.m.Label({
+			text : "Answers",
+			labelFor : oAnswerList
+		});
+		oForm.addContent(oAnswersLabel);
+		oForm.addContent(oAnswerList);
+
+		return oForm;
+	},
+
+	createGradesForm: function(){
+		var oForm = this.createForm();
+		var oTitleLabel = new sap.m.Label({
+			text : "Grades question",
+		});
+		oForm.addContent(oTitleLabel);
+		var currentCounter = this.getModel("counter").getProperty("/counter");
+		var oQuestionText = new sap.m.Input({
+			value: {
+				path: "survey>/questions/"+currentCounter+"/questiontext"
+			}
+		});
+		var oQuestionTextLabel = new sap.m.Label({
+			text : "Question text",
+			labelFor : oQuestionText
+		});
+		oForm.addContent(oQuestionTextLabel);
+		oForm.addContent(oQuestionText);
+
+		var oListTemplate = new sap.m.StandardListItem({
+			title: "Test",
+			description: "{answertext}",
+		});
+		var oAnswerList = new sap.m.List({
+			items: {
+				path: "survey>/questions/"+currentCounter+"/answers",
+				template: oListTemplate
+			}
+		});
+		console.log(this.getModel("survey").getProperty("/questions/"+currentCounter));
+		var oAnswersLabel = new sap.m.Label({
+			text : "Answers",
+			labelFor : oAnswerList
+		});
+		oForm.addContent(oAnswersLabel);
+		oForm.addContent(oAnswerList);
+
 		return oForm;
 	},
 
@@ -175,11 +221,16 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		// add new question dialog
 		var listItemYesNo = new sap.m.StandardListItem({
 			title: "Yes/No",
-			customData:[new sap.ui.core.CustomData({key: "type", value: 1}), new sap.ui.core.CustomData({key: "multiple", value: false})]
+			customData:[new sap.ui.core.CustomData({key: "type", value: 1}),
+			new sap.ui.core.CustomData({key: "multiple", value: false}),
+			new sap.ui.core.CustomData({key: "items", value: [{answertext:"Yes"}, {answertext:"No"}]})]
 		});
 		var listItemGrades = new sap.m.StandardListItem({
 			title: "Grades (1-5)",
-			customData:[new sap.ui.core.CustomData({key: "type", value: 2}), new sap.ui.core.CustomData({key: "multiple", value: false})]
+			customData:[new sap.ui.core.CustomData({key: "type", value: 2}),
+			new sap.ui.core.CustomData({key: "multiple", value: false}),
+			//new sap.ui.core.CustomData({key: "items", value: [{answertext: "1"},{answertext:"2"},{answertext:"3"},{answertext:"4"},{answertext:"5"}]})]
+			new sap.ui.core.CustomData({key: "items", value: [{answertext: "one"},{answertext:"two"}]})]
 		});
 		var oSelectDialog = new sap.m.SelectDialog({
 			title: "Add new Question",
@@ -187,14 +238,15 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			items : [listItemYesNo, listItemGrades],
 			confirm: function(evt){
 				var nextCounter = that.getModel("counter").getProperty("/counter")+1;
-				var type =evt.getParameters().selectedItems[0].getCustomData()[0].getProperty("value");
-				var multiple = evt.getParameters().selectedItems[0].getCustomData()[1].getProperty("value");
-				console.log(evt.getParameters().selectedItems[0].getTitle()+", "+type);
+				var customData = evt.getParameters().selectedItems[0].getCustomData();
+				var type =customData[0].getProperty("value");
+				var multiple = customData[1].getProperty("value");
+				var items = customData[2].getProperty("value");
 				var question = {
 					type: type,
-					questiontext: "",
+					questiontext: "text",
 					multiple: multiple,
-					answers: []
+					answers: items
 				}
 				that.getModel("survey").setProperty("/questions/"+nextCounter, question);
 				console.log(that.getModel("survey").getProperty("/questions/"+nextCounter+"/type"));

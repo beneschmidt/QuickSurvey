@@ -83,12 +83,20 @@ module.exports = {
 			if(body.questions){
 				log.info("yes, I have questions");
 				for(var i = 0; i < body.questions.length; i++){
-					var next = i*3 + 3;
 					var q = body.questions[i];
 					var insertQuestion="INSERT INTO question (id, questiontext, multiple, type, survey_id) VALUES ($1, $2, $3, $4, $5);";
-					sqlArray.push(insertQuestion);
+					log.info("Question: "+q.questiontext);
 					var questionParams = [nextQid, q.questiontext, q.multiple,q.type, nextSid];
 					paramsArray.push(questionParams);
+					for(var j = 0; j < q.answers.length; j++){
+							var a = q.answers[j];
+							var insertAnswer="INSERT INTO possible_answer (id, answertext, question_id) VALUES ($1, $2, $3);";
+							sqlArray.push(insertAnswer);
+							var answerParams = [nextAid, a.answertext, nextQid];
+							paramsArray.push(answerParams);
+							nextAid++;
+					}
+					nextQid++;
 				}
 			}
 			var insertSurveyCallback = function(sqlOK){
