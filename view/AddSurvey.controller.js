@@ -42,37 +42,33 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 
 			var currentCounter = this.getView().getCurrentCounter();
 			var numberOfQuestions = this.getView().getModel("survey").getProperty("/questions").length;
-			if(currentCounter>=0){
-				var oBtnPrevious = new sap.m.Button({
-					icon : "sap-icon://arrow-left",
-					tooltip : "previous page",
-					press : function(ev) {
-						oController.getView().previousView();
-					}
-				});
-				footerArrayLeft.push(oBtnPrevious);
-
-
-				var oBtnClearQuestion = new sap.m.Button({
-					icon : "sap-icon://sys-cancel-2",
-					visible : quicksurvey.app.config.LaunchpadMode,
-					tooltip : "Clear question",
-					press : function(ev) {
-						oController.clearQuestion();
-					}
-				});
-				footerArrayRight.push(oBtnClearQuestion);
-			}
-			if(currentCounter < numberOfQuestions-1){
-				var oBtnNext = new sap.m.Button({
-					icon : "sap-icon://arrow-right",
-					tooltip : "next page",
-					press : function(ev) {
-						oController.getView().nextView();
-					}
-				});
-				footerArrayRight.push(oBtnNext);
-			}
+			var oBtnPrevious = new sap.m.Button({
+				icon : "sap-icon://arrow-left",
+				tooltip : "previous page",
+				visible : currentCounter>=0,
+				press : function(ev) {
+					oController.getView().previousView();
+				}
+			});
+			footerArrayLeft.push(oBtnPrevious);
+			var oBtnNext = new sap.m.Button({
+				icon : "sap-icon://arrow-right",
+				tooltip : "next page",
+				visible: currentCounter < numberOfQuestions-1,
+				press : function(ev) {
+					oController.getView().nextView();
+				}
+			});
+			footerArrayRight.push(oBtnNext);
+			var oBtnClearQuestion = new sap.m.Button({
+				icon : "sap-icon://sys-cancel-2",
+				visible : currentCounter>=0,
+				tooltip : "Clear question",
+				press : function(ev) {
+					oController.clearQuestion();
+				}
+			});
+			footerArrayRight.push(oBtnClearQuestion);
 			var oBtnDelete = new sap.m.Button({
 				icon : "sap-icon://delete",
 				visible : oController.getView().getModel("info").getProperty("/update"),
@@ -85,9 +81,13 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			var oBtnNew = new sap.m.Button({
 				icon : "sap-icon://save",
 				visible : quicksurvey.app.config.LaunchpadMode,
-				tooltip : "Create a new survey",
+				tooltip : "Save",
 				press : function(ev) {
-					oController.addSurvey();
+					if(oController.getView().getModel("info").getProperty("/update")){
+						oController.updateSurvey();
+					} else {
+						oController.addSurvey();
+					}
 				}
 			});
 			footerArrayRight.push(oBtnNew);
@@ -128,7 +128,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 
 		var input = {
 			title   : survey.name,
-			answersChangable   : survey.changeanswers,
+			answersChangable : survey.changeanswers,
 			surveyId: survey.objectId,
 			questions: survey.questions
 		};
@@ -146,12 +146,6 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 		surveyModel.setProperty("/questions", currentArray);
 
 		this.getView().previousView();
-	},
-
-	prevView : function(){
-		var model = this.getView().getModel("info");
-		model.setProperty("counter", model.getProperty("/counter")-1);
-		this.getView().rerender();
 	},
 
 	clearModel: function(){
@@ -206,6 +200,42 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 					console.log("An unknown error occured: "+textStatus);
 				}
 				controller.clearModel();
+				sap.ui.getCore().getEventBus().publish("nav", "to", {
+					id : "SurveyList"
+				});
+			},
+			data: { survey: survey }
+		});
+	},
+
+	updateSurvey: function(event){
+		var controller = this;
+		var model = this.getView().getModel("survey");
+		var that= this;
+		var survey = {
+			name : model.getProperty("/title"),
+			answersChangable : model.getProperty("/answersChangable"),
+			surveyId: model.getProperty("/surveyId"),
+			questions: model.getProperty("/questions")
+		};
+
+		$.ajax({
+			url: './updateSurvey',
+			type: 'post',
+			//	contentType: "application/json; charset=utf-8",
+			success: function (data) {
+				console.log("updated");
+				sap.ui.getCore().getEventBus().publish("nav", "to", {
+					id : "SurveyList"
+				});
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				if(jqXHR.readyState === 0){
+					console.log("Server unreachable");
+				} else {
+					console.log("An unknown error occured: "+textStatus);
+				}
+
 				sap.ui.getCore().getEventBus().publish("nav", "to", {
 					id : "SurveyList"
 				});

@@ -18,11 +18,11 @@ module.exports = {
 		});
 		app.post("/QuickSurvey/addNewSurvey", function(req, res){
 			log.info("Adding a new survey...");
-      rest.addNewSurvey(res, req, req.body.survey, log);
+      rest.addOrUpdateSurvey(res, req, req.body.survey, log);
 		});
 		app.post("/QuickSurvey/updateSurvey", function(req, res){
 			log.info("Updating survey...");
-      rest.updateSurvey(res, req, req.body.survey, log);
+      rest.addOrUpdateSurvey(res, req, req.body.survey, log);
 		});
 		app.post("/QuickSurvey/deleteSurvey", function(req, res){
 			log.info("Deleting survey...");

@@ -30,10 +30,12 @@ module.exports = {
           type: current.type
         });
       }
-      objects[spos].questions[qpos].answers.push({
-        objectId: current.aid,
-        answertext : current.answertext
-      });
+      if(objects[spos].questions[qpos]){
+        objects[spos].questions[qpos].answers.push({
+          objectId: current.aid,
+          answertext : current.answertext
+        });
+      }
     }
     var fullList = {
       Survey: objects

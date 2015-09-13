@@ -61,12 +61,7 @@ module.exports = {
 		dbutils.executeSelectSQL(sql, [], log, idCallback);
 	},
 
-
-	addQuestionInsert: function(startInt, question){
-		return  "INSERT INTO question (id, questiontext, mutliple, survey_id) VALUES ($"+startInt+", $"+(startInt+1)+", $"+(startInt+2)+", $"+(startInt+3)+");";
-	},
-
-	addNewSurvey : function(res, req, body, log){
+	addOrUpdateSurvey : function(res, req, body, log){
 		var dbutils = require("./dbutils.js");
 		var that = this;
 		var nextSurveyCallback = function(object){
@@ -76,60 +71,50 @@ module.exports = {
 			var nextAid = object.aid+1;
 			var paramsArray = [];
 			var sqlArray =[];
-			var insertSurveyParams = [nextSid, body.name, body.answersChangable];
-			var insertSurvey = "INSERT INTO survey (id, name, changeanswers) VALUES ($1, $2, $3);";
-			sqlArray.push(insertSurvey);
-			paramsArray.push(insertSurveyParams);
+			if(body.surveyId){
+				var deleteSurveyParams = [body.surveyId];
+				var deleteSurvey = "DELETE FROM survey WHERE id = $1;";
+				sqlArray.push(deleteSurvey);
+				paramsArray.push(deleteSurveyParams);
+			}
+			var updateSurveyParams = [nextSid, body.name, body.answersChangable];
+			var updateSurvey = "INSERT INTO survey (id, name, changeanswers) VALUES ($1, $2, $3);";
+			sqlArray.push(updateSurvey);
+			paramsArray.push(updateSurveyParams);
 			if(body.questions){
 				log.info("yes, I have questions");
 				for(var i = 0; i < body.questions.length; i++){
 					var q = body.questions[i];
-					var insertQuestion="INSERT INTO question (id, questiontext, multiple, type, survey_id) VALUES ($1, $2, $3, $4, $5);";
+					var updateQuestion="INSERT INTO question (id, questiontext, multiple, type, survey_id) VALUES ($1, $2, $3, $4, $5);";
 					log.info("Question: "+q.questiontext);
-					sqlArray.push(insertQuestion);
+					sqlArray.push(updateQuestion);
 					var questionParams = [nextQid, q.questiontext, q.multiple,q.type, nextSid];
 					paramsArray.push(questionParams);
 					for(var j = 0; j < q.answers.length; j++){
-							var a = q.answers[j];
-							var insertAnswer="INSERT INTO possible_answer (id, answertext, question_id) VALUES ($1, $2, $3);";
-							sqlArray.push(insertAnswer);
-							var answerParams = [nextAid, a.answertext, nextQid];
-							paramsArray.push(answerParams);
-							nextAid++;
+						var a = q.answers[j];
+						var updateAnswer="INSERT INTO possible_answer (id, answertext, question_id) VALUES ($1, $2, $3);";
+						sqlArray.push(updateAnswer);
+						var answerParams = [nextAid, a.answertext, nextQid];
+						paramsArray.push(answerParams);
+						nextAid++;
 					}
 					nextQid++;
 				}
 			}
-			var insertSurveyCallback = function(sqlOK){
+			var updateSurveyCallback = function(sqlOK){
 				if(sqlOK){
 					//this.executeUpdateSQL(sql, params, log, callback);
 					res.writeHead(200, "OK", {'Content-Type': 'text/html'});
 					res.end();
 				} else {
-					log.error("Error at inserting multiple stuff: "+sqlOK);
+					log.error("Error at updateing multiple stuff: "+sqlOK);
 					res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
 					res.end();
 				}
 			}
-			dbutils.executeUpdateMultipleSQL(sqlArray, paramsArray, log, insertSurveyCallback);
+			dbutils.executeUpdateMultipleSQL(sqlArray, paramsArray, log, updateSurveyCallback);
 		}
 		this.getMaxIds(nextSurveyCallback, log);
-	},
-
-	updateSurvey : function(res, req, body, log){
-		var dbutils = require("./dbutils.js");
-		var params = [body.surveyId, body.name, body.answersChangable];
-		var sql = "UPDATE survey SET name = $2, changeanswers= $3   WHERE id = $1";
-		var callback = function(sqlOK){
-			if(sqlOK){
-				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-				res.end();
-			} else {
-				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
-				res.end();
-			}
-		}
-		dbutils.executeUpdateSQL(sql, params, log, callback);
 	},
 
 	deleteSurvey : function(res, req, survey, log){

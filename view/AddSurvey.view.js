@@ -124,16 +124,22 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 
 		// change answers
 		var oChangeAnswers = new sap.m.ToggleButton({
-			text : "No",
-			pressed: false,
+			pressed: {path: "survey>/answersChangable"},
 			press : function(evt){
 				if (evt.getSource().getPressed()){
-					that.getModel("survey").setProperty("/answersChangable", true);
+					this.getModel("survey").setProperty("/answersChangable", true);
 					oChangeAnswers.setText("Yes");
 				} else {
-					that.getModel("survey").setProperty("/answersChangable", false);
+					this.getModel("survey").setProperty("/answersChangable", false);
 					oChangeAnswers.setText("No");
 				}
+			}
+		});
+		oChangeAnswers.bindProperty("text", "survey>/answersChangable", function(changable) {
+			if (changable) {
+				return "Yes"
+			} else{
+				return "No";
 			}
 		});
 		var oChangeAnswersLabel = new sap.m.Label({
@@ -255,8 +261,9 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 					multiple: multiple,
 					answers: items
 				}
-				that.getModel("survey").setProperty("/questions/"+nextCounter, question);
-				console.log(that.getModel("survey").getProperty("/questions/"+nextCounter+"/type"));
+				var arr = that.getModel("survey").getProperty("/questions");
+				arr.splice(nextCounter, 0 , question);
+				that.getModel("survey").setProperty("/questions", arr);
 				that.nextView();
 			}
 		});
