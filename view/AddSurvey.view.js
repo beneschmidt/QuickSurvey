@@ -44,25 +44,28 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		return page;
 	},
 
-	nextView : function(){
-		var model = this.getModel("counter");
-		model.setProperty("/counter", model.getProperty("/counter")+1);
-		sap.ui.getCore().getEventBus().publish("nav", "to", {
-			id : "AddSurvey"
-		});
+	getCurrentCounter:function(){
+		return this.getModel("info").getProperty("/counter");
 	},
-	
+
+	nextView : function(){
+		this.navToView(+1);
+	},
+
 	previousView : function(){
-		var model = this.getModel("counter");
-		model.setProperty("/counter", model.getProperty("/counter")-1);
+		this.navToView(-1);
+	},
+
+	navToView:function(viewDirection){
+		this.getModel("info").setProperty("/counter", this.getCurrentCounter()+viewDirection);
 		sap.ui.getCore().getEventBus().publish("nav", "to", {
 			id : "AddSurvey"
 		});
 	},
 
 	getCurrentForm : function(){
-		if(this.getModel("counter")){
-			var currentCounter = this.getModel("counter").getProperty("/counter");
+		if(this.getModel("info")){
+			var currentCounter = this.getCurrentCounter();
 			if(currentCounter === -1){
 				return this.createTitleForm();
 			} else {
@@ -149,7 +152,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			text : "Yes/No question",
 		});
 		oForm.addContent(oTitleLabel);
-		var currentCounter = this.getModel("counter").getProperty("/counter");
+		var currentCounter = this.getCurrentCounter();
 		var oQuestionText = new sap.m.Input({
 			value: {
 				path: "survey>/questions/"+currentCounter+"/questiontext"
@@ -189,7 +192,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			text : title,
 		});
 		oForm.addContent(oTitleLabel);
-		var currentCounter = this.getModel("counter").getProperty("/counter");
+		var currentCounter = this.getCurrentCounter();
 		var oQuestionText = new sap.m.Input({
 			value: {
 				path: "survey>/questions/"+currentCounter+"/questiontext"
@@ -241,7 +244,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			noDataText: "Nothing possible",
 			items : [listItemYesNo, listItemGrades],
 			confirm: function(evt){
-				var nextCounter = that.getModel("counter").getProperty("/counter")+1;
+				var nextCounter = that.getCurrentCounter()+1;
 				var customData = evt.getParameters().selectedItems[0].getCustomData();
 				var type =customData[0].getProperty("value");
 				var multiple = customData[1].getProperty("value");

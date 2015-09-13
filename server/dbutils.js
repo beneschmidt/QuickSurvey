@@ -18,22 +18,22 @@ module.exports = {
           runtime: current.runtime,
           changeanswers: current.changeanswers
         }
-      } else if(qid!= current.qid){
+      }
+      if(qid!= current.qid){
         qpos++;
-        qid = current.qid
+        qid = current.qid;
         objects[spos].questions.push({
           objectId: current.qid,
-          questionText: current.questiontext,
+          questiontext: current.questiontext,
           multiple: current.multiple,
           answers: [],
           type: current.type
         });
-      } else {
-        objects[spos].questions[qpos].answers.push({
-          objectId: current.aid,
-          answertext : current.answertext
-        });
       }
+      objects[spos].questions[qpos].answers.push({
+        objectId: current.aid,
+        answertext : current.answertext
+      });
     }
     var fullList = {
       Survey: objects

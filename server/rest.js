@@ -29,13 +29,13 @@ module.exports = {
 		var dbutils = require("./dbutils.js");
 		var params = [req.query.id];
 		var sql = "SELECT * FROM view_full_surveys WHERE sid = $1";
+		log.info("requesting Survey with id "+req.query.id);
 		var callback = function(result, error){
 			if(error){
 				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
 				res.end();
 			} else {
 				var toSend = dbutils.extractFullSurveyList(result, log);
-				log.info(toSend.Survey.length);
 				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
 				res.write(JSON.stringify(toSend) + "\n");
 				res.end();
