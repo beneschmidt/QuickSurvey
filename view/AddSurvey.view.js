@@ -51,6 +51,14 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			id : "AddSurvey"
 		});
 	},
+	
+	previousView : function(){
+		var model = this.getModel("counter");
+		model.setProperty("/counter", model.getProperty("/counter")-1);
+		sap.ui.getCore().getEventBus().publish("nav", "to", {
+			id : "AddSurvey"
+		});
+	},
 
 	getCurrentForm : function(){
 		if(this.getModel("counter")){

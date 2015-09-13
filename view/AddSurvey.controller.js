@@ -20,7 +20,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			}
 
 			if(this.getView().page){
-			// update content
+				// update content
 				this.getView().page.removeAllContent();
 				var form = this.getView().getCurrentForm(data.type);
 				var selectCombo = this.getView().createSelectDialogCombo();
@@ -30,16 +30,53 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 
 				var oController = this;
 
+				var footerArrayRight = [], footerArrayLeft=[];
+
+				var currentCounter = this.getView().getModel("counter").getProperty("/counter");
+				var numberOfQuestions = this.getView().getModel("survey").getProperty("/questions").length;
+				if(currentCounter>=0){
+					var oBtnPrevious = new sap.m.Button({
+						icon : "sap-icon://arrow-left",
+						tooltip : "previous page",
+						press : function(ev) {
+							oController.getView().previousView();
+						}
+					});
+					footerArrayLeft.push(oBtnPrevious);
+
+
+					var oBtnClearQuestion = new sap.m.Button({
+						icon : "sap-icon://sys-cancel-2",
+						visible : quicksurvey.app.config.LaunchpadMode,
+						tooltip : "Clear question",
+						press : function(ev) {
+							oController.clearQuestion();
+						}
+					});
+					footerArrayRight.push(oBtnClearQuestion);
+				}
+				if(currentCounter< numberOfQuestions-1){
+					var oBtnNext = new sap.m.Button({
+						icon : "sap-icon://arrow-right",
+						tooltip : "next page",
+						press : function(ev) {
+							oController.getView().nextView();
+						}
+					});
+					footerArrayRight.push(oBtnNext);
+				}
 				var oBtnNew = new sap.m.Button({
-					icon : "sap-icon://create",
+					icon : "sap-icon://save",
 					visible : quicksurvey.app.config.LaunchpadMode,
 					tooltip : "Create a new survey",
 					press : function(ev) {
 						oController.addSurvey();
 					}
 				});
+				footerArrayRight.push(oBtnNew);
 				var bar = new sap.m.Bar({
-					contentRight: [oBtnNew]
+					contentRight: footerArrayRight,
+					contentLeft: footerArrayLeft
 				});
 
 				this.getView().page.setFooter(bar);
@@ -50,6 +87,16 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 	updateModel: function(json){
 		var model = new sap.ui.model.json.JSONModel(json);
 		this.getView().setModel(model, "input");
+	},
+
+	clearQuestion: function(){
+		var currentCounter = this.getView().getModel("counter").getProperty("/counter");
+		var surveyModel = this.getView().getModel("survey");
+		var currentArray = surveyModel.getProperty("/questions");
+		currentArray.splice(currentCounter, 1);
+		surveyModel.setProperty("/questions", currentArray);
+
+		this.getView().previousView();
 	},
 
 	prevView : function(){
