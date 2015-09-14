@@ -28,5 +28,10 @@ module.exports = {
 			log.info("Deleting survey...");
       rest.deleteSurvey(res, req, req.body.survey, log);
 		});
+		app.post("/QuickSurvey/performSurvey", function(req, res){
+			log.info("Updating survey...");
+      rest.addSurveyPerform(res, req, req.body.survey, log);
+		});
+
 	}
 }

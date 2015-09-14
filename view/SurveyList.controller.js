@@ -13,7 +13,6 @@ sap.ui.controller("quicksurvey.view.SurveyList", {
 
   loadData: function(){
     var that= this;
-    console.log("load data...");
     $.get("./surveyList", function( data ) {
       var json = JSON.parse(data);
       that.updateModel(json);

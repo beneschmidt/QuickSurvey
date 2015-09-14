@@ -61,6 +61,15 @@ module.exports = {
 		dbutils.executeSelectSQL(sql, [], log, idCallback);
 	},
 
+	getPerformMaxIds:function(callback, log){
+		var dbutils = require("./dbutils.js");
+		var sql = "SELECT MAX(s.id) AS sid, MAX(q.id) AS qid, MAX(a.id) AS aid FROM performed_survey s, performed_question q, performed_answer a";
+		var idCallback = function(result){
+			callback(result[0]);
+		}
+		dbutils.executeSelectSQL(sql, [], log, idCallback);
+	},
+
 	addOrUpdateSurvey : function(res, req, body, log){
 		var dbutils = require("./dbutils.js");
 		var that = this;
@@ -116,6 +125,58 @@ module.exports = {
 		}
 		this.getMaxIds(nextSurveyCallback, log);
 	},
+
+	addSurveyPerform : function(res, req, body, log){
+		var dbutils = require("./dbutils.js");
+		var that = this;
+		var nextSurveyCallback = function(object){
+			log.info("maxIds = "+object.sid+", "+object.qid+", "+object.aid);
+			var nextSid = object.sid+1;
+			var nextQid = object.qid+1;
+			var nextAid = object.aid+1;
+			log.info("maxIds = "+nextSid+", "+nextQid+", "+nextAid);
+			var paramsArray = [];
+			var sqlArray =[];
+			var updateSurveyParams = [nextSid, body.survey_id, body.performed_at];
+			var updateSurvey = "INSERT INTO performed_survey (id, survey_id, performed_at) VALUES ($1, $2, $3);";
+			sqlArray.push(updateSurvey);
+			paramsArray.push(updateSurveyParams);
+			if(body.performed_questions){
+				log.info("yes, I have questions");
+				for(var i = 0; i < body.performed_questions.length; i++){
+					var q = body.performed_questions[i];
+					var updateQuestion="INSERT INTO performed_question (id, question_id, performed_survey_id) VALUES ($1, $2, $3);";
+					log.info("Question: "+q.questiontext);
+					sqlArray.push(updateQuestion);
+					var questionParams = [nextQid, q.question_id, nextSid];
+					paramsArray.push(questionParams);
+					for(var j = 0; j < q.performed_answers.length; j++){
+						var a = q.performed_answers[j];
+						var updateAnswer="INSERT INTO performed_answer (id, answer_id, performed_question_id, freetext) VALUES ($1, $2, $3, $4);";
+						sqlArray.push(updateAnswer);
+						var answerParams = [nextAid, a.answer_id, nextQid, a.freetext];
+						paramsArray.push(answerParams);
+						nextAid++;
+					}
+					nextQid++;
+				}
+			}
+			var updateSurveyCallback = function(sqlOK){
+				if(sqlOK){
+					//this.executeUpdateSQL(sql, params, log, callback);
+					res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+					res.end();
+				} else {
+					log.error("Error at updateing multiple stuff: "+sqlOK);
+					res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
+					res.end();
+				}
+			}
+			dbutils.executeUpdateMultipleSQL(sqlArray, paramsArray, log, updateSurveyCallback);
+		}
+		this.getPerformMaxIds(nextSurveyCallback, log);
+	},
+
 
 	deleteSurvey : function(res, req, survey, log){
 		var dbutils = require("./dbutils.js");
