@@ -18,7 +18,11 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			if(data.isNew){
 				this.clearModel();
 			}
-			this.loadData(data.surveyId);
+			if(data.surveyId){
+				this.loadData(data.surveyId);
+			} else {
+				this.updatePage();
+			}
 		}
 	},
 
@@ -43,10 +47,21 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 				}
 			});
 			footerArrayLeft.push(oBtnPrevious);
+			var oBtnHome = new sap.m.Button({
+				icon : "sap-icon://home",
+				tooltip : "home",
+				visible: currentCounter === numberOfQuestions,
+				press : function(ev) {
+					sap.ui.getCore().getEventBus().publish("nav", "to", {
+						id : "SurveyList"
+					});
+				}
+			});
+			footerArrayRight.push(oBtnHome);
 			var oBtnNext = new sap.m.Button({
 				icon : "sap-icon://arrow-right",
 				tooltip : "next page",
-				visible: currentCounter < numberOfQuestions-2,
+				visible: currentCounter < numberOfQuestions-1,
 				press : function(ev) {
 					oController.getView().nextView();
 				}
@@ -54,7 +69,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			footerArrayRight.push(oBtnNext);
 			var oBtnNew = new sap.m.Button({
 				icon : "sap-icon://save",
-				visible : quicksurvey.app.config.LaunchpadMode,
+				visible : currentCounter === numberOfQuestions-1,
 				tooltip : "Save",
 				press : function(ev) {
 					oController.sendSurveyInfos();
@@ -159,10 +174,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			type: 'post',
 			//	contentType: "application/json; charset=utf-8",
 			success: function (data) {
-				controller.clearModel();
-				sap.ui.getCore().getEventBus().publish("nav", "to", {
-					id : "SurveyList"
-				});
+				that.getView().nextView();
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				if(jqXHR.readyState === 0){

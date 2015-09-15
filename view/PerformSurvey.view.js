@@ -36,7 +36,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 			}
 		});
 		var page =  new sap.m.Page({
-			title : "Perform Survey",
+			title : "{info>/title}",
 			showNavButton: "{device>/isPhone}",
 			headerContent:[oBtnLaunchpad],
 			navButtonPress: [oController.doNavBack, oController]
@@ -67,8 +67,12 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 	getCurrentForm : function(){
 		if(this.getModel("info")){
 			var currentCounter = this.getCurrentCounter();
-			var questionText = this.getModel("survey").getProperty("/questions/"+currentCounter+"/questiontext");
-			return this.createFormForType(this.getModel("survey").getProperty("/questions/"+currentCounter+"/type"), questionText);
+			if(currentCounter===this.getModel("survey").getProperty("/questions").length){
+				return this.createThanksForm();
+			} else {
+				var questionText = this.getModel("survey").getProperty("/questions/"+currentCounter+"/questiontext");
+				return this.createFormForType(this.getModel("survey").getProperty("/questions/"+currentCounter+"/type"), questionText);
+			}
 		}
 	},
 
@@ -105,12 +109,11 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 	},
 
 	createQuestionForm: function(title){
+		this.getModel("info").setProperty("/title", title);
 		var oForm = this.createForm();
-		var oTitleLabel = new sap.m.Label({
-			text : title,
-		});
 		//oForm.addContent(oTitleLabel);
 		var currentCounter = this.getCurrentCounter();
+		var that = this;
 
 		var oQuestionText = new sap.m.Title({
 			text: {
@@ -131,10 +134,13 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		});
 		oAnswerList.bindAggregation("items", "survey>/questions/"+currentCounter+"/answers", function(sId, oContext) {
 			var value = oContext.getProperty("answertext");
-			return new sap.m.StandardListItem({
+			var selectedItems = that.getModel("perform").getProperty("/performed_questions/"+currentCounter+"/performed_answers");
+			var item = new sap.m.StandardListItem({
 				title: value,
-				customData: [new sap.ui.core.CustomData({key:"objectId", value: oContext.getProperty("objectId")})]
+				customData: [new sap.ui.core.CustomData({key:"objectId", value: oContext.getProperty("objectId")})],
+				selected: true
 			});
+			return item;
 		});
 		oAnswerList.bindProperty("mode", "survey>/questions/"+currentCounter+"/multiple", function(multiple) {
 			if (multiple) {
@@ -144,7 +150,6 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 			}
 		});
 
-		var that = this;
 		oAnswerList.attachSelectionChange(function(oControlEvent){
 			var selectedAnswers = oControlEvent.getParameters().listItems;
 			var peformedAnswers = [];
@@ -162,6 +167,32 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		});
 		oForm.addContent(oAnswersLabel);
 		oForm.addContent(oAnswerList);
+
+		return oForm;
+	},
+
+	createThanksForm: function(){
+		var oForm = new sap.ui.layout.form.SimpleForm({
+				maxContainerCols: 1,
+				editable        : false,
+				layout          : "ResponsiveGridLayout",
+			});
+		this.getModel("info").setProperty("/title", "Thanks");
+		//oForm.addContent(oTitleLabel);
+		var currentCounter = this.getCurrentCounter();
+		var that = this;
+
+		var oThanksText = new sap.m.Title({
+			text: "Thank you for participating",
+			textAlign: sap.ui.core.TextAlign.Center,
+			titleStyle: sap.ui.core.TitleLevel.H1
+		});
+		oForm.addContent(oThanksText);
+
+		var oImage = new sap.m.Image({
+			src: 'img/Smiley_Face.png'
+		})
+		oForm.addContent(oImage);
 
 		return oForm;
 	},
