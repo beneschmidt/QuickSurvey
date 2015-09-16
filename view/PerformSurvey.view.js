@@ -25,7 +25,6 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 	*/
 	createContent : function(oController) {
 		var that = this;
-		console.log("createContent");
 
 		var oBtnLaunchpad = new sap.m.Button({
 			icon : "sap-icon://home",
@@ -173,10 +172,9 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 
 	createThanksForm: function(){
 		var oForm = new sap.ui.layout.form.SimpleForm({
-				maxContainerCols: 1,
-				editable        : false,
-				layout          : "ResponsiveGridLayout",
-			});
+			editable        : false,
+			layout          : "ResponsiveGridLayout",
+		});
 		this.getModel("info").setProperty("/title", "Thanks");
 		//oForm.addContent(oTitleLabel);
 		var currentCounter = this.getCurrentCounter();
@@ -185,14 +183,24 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		var oThanksText = new sap.m.Title({
 			text: "Thank you for participating",
 			textAlign: sap.ui.core.TextAlign.Center,
-			titleStyle: sap.ui.core.TitleLevel.H1
+			titleStyle: sap.ui.core.TitleLevel.H2
 		});
-		oForm.addContent(oThanksText);
 
 		var oImage = new sap.m.Image({
 			src: 'img/Smiley_Face.png'
 		})
-		oForm.addContent(oImage);
+		var oButtonContainer = new sap.m.FlexBox({
+			justifyContent: sap.m.FlexJustifyContent.Center,
+			alignItems: sap.m.FlexAlignItems.Center,
+			items: [oThanksText, oImage],
+			direction: sap.m.FlexDirection.Column
+		}).addDelegate({
+			onAfterRendering: function () {
+				oImage.setHeight(oButtonContainer.$().height() + "px");
+			}
+		});
+		oForm.addContent(new sap.m.Label());
+		oForm.addContent(oButtonContainer);
 
 		return oForm;
 	},
