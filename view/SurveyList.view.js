@@ -12,14 +12,58 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
       icon: "sap-icon://document-text",
       description: "{name}",
       type: "Active",
-      customData:[new sap.ui.core.CustomData({key: "objectId", value: "{objectId}"})],
+      customData:[new sap.ui.core.CustomData({key: "objectId", value: "{objectId}"}),
+      new sap.ui.core.CustomData({key: "startedat", value: "{startedat}"}),
+      new sap.ui.core.CustomData({key: "finishat", value: "{finishat}"})],
       press: function(ev){
-        var object = {id : "StartSurvey", surveyId: this.getCustomData()[0].getProperty("value"), isNew: true};
+        var surveyId = this.getCustomData()[0].getProperty("value");
+        var startedat = this.getCustomData()[1].getProperty("value");
+        var finishat = this.getCustomData()[2].getProperty("value");
+        var idToNavTo = "";
+        if(!startedat){
+          idToNavTo="StartSurvey";
+        } else if (finishat && new Date().getTime() < finishat){
+          idToNavTo="PerformSurvey"
+        } else {
+          // TODO should be anaylsis
+          idToNavTo="AddSurvey";
+        }
+        var object = {id : idToNavTo, surveyId: this.getCustomData()[0].getProperty("value"), isNew: true};
         sap.ui.getCore().getEventBus().publish("nav", "to", object);
       },
     });
     oListTemplate.bindProperty("title", "name");
-    oListTemplate.bindProperty("info", "finished", function(finished) {
+    oListTemplate.bindProperty("info", {
+      parts: [
+        {path: "startedat"},
+        {path: "finishat"}
+      ],
+      formatter: function(startedat, finishat){
+        if(!startedat){
+          return "Not yet started";
+        } else if(finishat && new Date().getTime()< finishat){
+          return "Started";
+        } else {
+          return "Finished";
+        }
+      }
+    });
+    oListTemplate.bindProperty("infoState", {
+      parts: [
+        {path: "startedat"},
+        {path: "finishat"}
+      ],
+      formatter: function(startedat, finishat){
+        if(!startedat){
+          return sap.ui.core.ValueState.Error;
+        } else if(finishat && new Date().getTime()< finishat){
+          return sap.ui.core.ValueState.Warning;
+        } else {
+          return sap.ui.core.ValueState.Success;
+        }
+      }
+    });
+    /*oListTemplate.bindProperty("info", "startedat", function(finished) {
       if (finished) {
         return "Finished"
       } else{
@@ -32,7 +76,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
       } else{
         return sap.ui.core.ValueState.Success;
       }
-    });
+    });*/
 
     var oList = new sap.m.List({});
     oList.bindAggregation("items", "/Survey", oListTemplate);

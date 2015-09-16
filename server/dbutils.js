@@ -13,10 +13,9 @@ module.exports = {
           objectId : current.sid,
           name : current.name,
           questions:[],
-          finished: current.finished,
           startedat: current.startedat,
-          runtime: current.runtime,
-          changeanswers: current.changeanswers
+          changeanswers: current.changeanswers,
+          finishat: current.finishat
         }
       }
       if(qid!= current.qid){
