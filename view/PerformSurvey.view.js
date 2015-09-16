@@ -170,6 +170,21 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		return oForm;
 	},
 
+	createNextButton: function(currentCounter, numberOfQuestions){
+		var oBtnNext = new sap.m.Button({
+			icon : "sap-icon://arrow-right",
+			tooltip : "next page",
+			press : function(ev) {
+				oController.getView().nextView();
+			}
+		});
+		oBtnNext.bindProperty("visible", "perform>/performed_questions/"+currentCounter+"/performed_answers", function(answers){
+			var hasAlreadySelectedSomething = answers? answers.length>0:false;
+			return currentCounter < numberOfQuestions-1 && hasAlreadySelectedSomething;
+		});
+		return oBtnNext;
+	},
+
 	createThanksForm: function(){
 		var oForm = new sap.ui.layout.form.SimpleForm({
 			editable        : false,

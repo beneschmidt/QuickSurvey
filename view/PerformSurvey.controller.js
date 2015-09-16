@@ -38,10 +38,11 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 
 			var currentCounter = this.getView().getCurrentCounter();
 			var numberOfQuestions = this.getView().getModel("survey").getProperty("/questions").length;
+			var canGoBack = this.getView().getModel("survey").getProperty("/answersChangable")? currentCounter > 0 && currentCounter <= numberOfQuestions-1: false;
 			var oBtnPrevious = new sap.m.Button({
 				icon : "sap-icon://arrow-left",
 				tooltip : "previous page",
-				visible : currentCounter>0 && this.getView().getModel("survey").getProperty("/changeanswers"),
+				visible : canGoBack,
 				press : function(ev) {
 					oController.getView().previousView();
 				}
@@ -58,13 +59,17 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 				}
 			});
 			footerArrayRight.push(oBtnHome);
+			// show next button only if something was selected
 			var oBtnNext = new sap.m.Button({
 				icon : "sap-icon://arrow-right",
 				tooltip : "next page",
-				visible: currentCounter < numberOfQuestions-1,
 				press : function(ev) {
 					oController.getView().nextView();
 				}
+			});
+			oBtnNext.bindProperty("visible", "perform>/performed_questions/"+currentCounter+"/performed_answers", function(answers){
+				var hasAlreadySelectedSomething = answers? answers.length>0:false;
+				return currentCounter < numberOfQuestions-1 && hasAlreadySelectedSomething;
 			});
 			footerArrayRight.push(oBtnNext);
 			var oBtnNew = new sap.m.Button({
@@ -72,7 +77,13 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 				visible : currentCounter === numberOfQuestions-1,
 				tooltip : "Save",
 				press : function(ev) {
-					oController.sendSurveyInfos();
+					var answers = oController.getView().getModel("perform").getProperty("/performed_questions/"+currentCounter+"/performed_answers");
+					var hasAlreadySelectedSomething = answers? answers.length>0:false;
+					if(hasAlreadySelectedSomething){
+						oController.sendSurveyInfos();
+					} else {
+						oController.openNothingSelectedDialog();
+					}
 				}
 			});
 			footerArrayRight.push(oBtnNew);
@@ -83,6 +94,26 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 
 			this.getView().page.setFooter(bar);
 		}
+	},
+
+	openNothingSelectedDialog : function(){
+		var dialog = new sap.m.Dialog({
+			title: "nothing selected",
+			type: sap.m.DialogType.Message,
+			state: sap.ui.core.ValueState.Warning,
+			content: [new sap.m.Text({
+				text: "Please select an answer before sending the survey. Thanks",
+				textAlign: sap.ui.core.TextAlign.Center
+			})]
+		})
+		var button = new sap.m.Button({
+			text: "OK",
+			press: function(oControlEvent){
+				dialog.close();
+			}
+		});
+		dialog.setEndButton(button);
+		dialog.open();
 	},
 
 	loadData: function(id){
