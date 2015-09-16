@@ -201,13 +201,21 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 			titleStyle: sap.ui.core.TitleLevel.H2
 		});
 
+		var oFinishedText = new sap.m.Title({
+			text: "Unfortunately it was already finished",
+			textAlign: sap.ui.core.TextAlign.Center,
+			visible: {
+				path:"info>/alreadyFinished"
+			}
+		});
+
 		var oImage = new sap.m.Image({
 			src: 'img/Smiley_Face.png'
 		})
 		var oButtonContainer = new sap.m.FlexBox({
 			justifyContent: sap.m.FlexJustifyContent.Center,
 			alignItems: sap.m.FlexAlignItems.Center,
-			items: [oThanksText, oImage],
+			items: [oThanksText, oImage, oFinishedText],
 			direction: sap.m.FlexDirection.Column
 		}).addDelegate({
 			onAfterRendering: function () {

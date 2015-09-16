@@ -56,27 +56,13 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
       formatter: function(startedat, finishat){
         if(!startedat){
           return sap.ui.core.ValueState.Error;
-        } else if(finishat && new Date().getTime()< finishat){
+        } else if(finishat && new Date().getTime() < finishat){
           return sap.ui.core.ValueState.Warning;
         } else {
           return sap.ui.core.ValueState.Success;
         }
       }
     });
-    /*oListTemplate.bindProperty("info", "startedat", function(finished) {
-      if (finished) {
-        return "Finished"
-      } else{
-        return "Not finished";
-      }
-    });
-    oListTemplate.bindProperty("infoState", "finished", function(finished) {
-      if (finished) {
-        return sap.ui.core.ValueState.Error;
-      } else{
-        return sap.ui.core.ValueState.Success;
-      }
-    });*/
 
     var oList = new sap.m.List({});
     oList.bindAggregation("items", "/Survey", oListTemplate);

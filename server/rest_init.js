@@ -29,11 +29,11 @@ module.exports = {
       rest.deleteSurvey(res, req, req.body.survey, log);
 		});
 		app.post("/QuickSurvey/performSurvey", function(req, res){
-			log.info("Updating survey...");
-      rest.addSurveyPerform(res, req, req.body.survey, log);
+			log.info("performing survey...");
+      rest.performSurveyIfNotFinished(res, req, req.body.survey, log);
 		});
 		app.post("/QuickSurvey/startSurvey", function(req, res){
-			log.info("Updating survey...");
+			log.info("starting survey...");
       rest.startSurvey(res, req, req.body.survey, log);
 		});
 

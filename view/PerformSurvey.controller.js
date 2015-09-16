@@ -179,11 +179,12 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 		this.getView().setModel(model, "perform");
 
 		var info = {
-			counter: 0
+			counter: 0,
+			alreadyFinished: false,
 		}
 
 		var infoModel = new sap.ui.model.json.JSONModel(info);
-		sap.ui.getCore().setModel(infoModel, "info");
+	this.getView().setModel(infoModel, "info");
 	},
 
 	doNavBack: function(event) {
@@ -205,6 +206,8 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			type: 'post',
 			//	contentType: "application/json; charset=utf-8",
 			success: function (data) {
+				var data =JSON.parse(data);
+				that.getView().getModel("info").setProperty("/alreadyFinished", !data.ok);
 				that.getView().nextView();
 			},
 			error: function(jqXHR, textStatus, errorThrown) {

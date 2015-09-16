@@ -161,8 +161,8 @@ module.exports = {
           that.callback();
           oClient.end();
         } else {
-          oClient.end();
           that.callback(that.result);
+          oClient.end();
         }
       });
     });

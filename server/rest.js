@@ -9,17 +9,16 @@ module.exports = {
 	getSurveyList : function(res, req, log){
 		var dbutils = require("./dbutils.js");
 		var sql = "SELECT * FROM view_full_surveys";
+		var that = this;
 		var callback = function(result, error){
 			if(error){
-				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
-				res.end();
+				log.info("not fine");
+				that.write500();
 			} else {
 				var dbutils = require("./dbutils.js");
 				var toSend = dbutils.extractFullSurveyList(result, log);
-				log.info(toSend.Survey.length);
-				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-				res.write(JSON.stringify(toSend) + "\n");
-				res.end();
+				log.info("fine");
+				that.write200(res, toSend);
 			}
 		}
 		dbutils.executeSelectSQL(sql, [], log, callback);
@@ -30,18 +29,29 @@ module.exports = {
 		var params = [req.query.id];
 		var sql = "SELECT * FROM view_full_surveys WHERE sid = $1";
 		log.info("requesting Survey with id "+req.query.id);
+		var that = this;
 		var callback = function(result, error){
 			if(error){
-				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
-				res.end();
+				write500(res);
 			} else {
 				var toSend = dbutils.extractFullSurveyList(result, log);
-				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-				res.write(JSON.stringify(toSend) + "\n");
-				res.end();
+				that.write200(res, toSend);
 			}
 		}
 		dbutils.executeSelectSQL(sql, params, log, callback);
+	},
+
+	write500:function(res){
+		res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
+		res.end();
+	},
+
+	write200:function(res, toSend){
+		res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+		if(toSend){
+			res.write(JSON.stringify(toSend) + "\n");
+		}
+		res.end();
 	},
 
 	getNextSurveyId : function(callback, log){
@@ -112,18 +122,38 @@ module.exports = {
 			}
 			var updateSurveyCallback = function(sqlOK){
 				if(sqlOK){
-					//this.executeUpdateSQL(sql, params, log, callback);
-					res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-					res.end();
+					that.write200(res);
 				} else {
-					log.error("Error at updateing multiple stuff: "+sqlOK);
-					res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
-					res.end();
+					that.write500(res);
 				}
 			}
 			dbutils.executeUpdateMultipleSQL(sqlArray, paramsArray, log, updateSurveyCallback);
 		}
 		this.getMaxIds(nextSurveyCallback, log);
+	},
+
+	performSurveyIfNotFinished: function(res, req, body, log){
+		var dbutils = require("./dbutils.js");
+		var that = this;
+		var params = [body.survey_id];
+		log.info(body.survey_id);
+		var sql = "SELECT * FROM view_full_surveys WHERE sid = $1";
+		var callback = function(result){
+			var survey = dbutils.extractFullSurveyList(result, log).Survey[0];
+			var finishat = survey.finishat;
+			var a = new Date().getTime();
+			if(finishat && a < finishat){
+				log.info("not finished: "+finishat);
+				that.addSurveyPerform(res, req, body, log);
+			} else {
+				log.info("already finished: "+finishat);
+				var toSend = {
+					ok : false
+				}
+				that.write200(res, toSend);
+			}
+		}
+		dbutils.executeSelectSQL(sql, params, log, callback);
 	},
 
 	addSurveyPerform : function(res, req, body, log){
@@ -161,18 +191,17 @@ module.exports = {
 					nextQid++;
 				}
 			}
-			var updateSurveyCallback = function(sqlOK){
+			var performSurveyCallback = function(sqlOK){
 				if(sqlOK){
-					//this.executeUpdateSQL(sql, params, log, callback);
-					res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-					res.end();
+					var toSend = {
+						ok : true
+					}
+					that.write200(res, toSend);
 				} else {
-					log.error("Error at updateing multiple stuff: "+sqlOK);
-					res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
-					res.end();
+					that.write500(res);
 				}
 			}
-			dbutils.executeUpdateMultipleSQL(sqlArray, paramsArray, log, updateSurveyCallback);
+			dbutils.executeUpdateMultipleSQL(sqlArray, paramsArray, log, performSurveyCallback);
 		}
 		this.getPerformMaxIds(nextSurveyCallback, log);
 	},
@@ -182,14 +211,12 @@ module.exports = {
 		var dbutils = require("./dbutils.js");
 		var params = [survey.surveyId];
 		var sql = "DELETE FROM survey WHERE id = $1";
+		var that = this;
 		var callback = function(sqlOK){
 			if(sqlOK){
-				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-				res.end();
+				that.write200(res);
 			} else {
-				// empty 200 OK response for now
-				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
-				res.end();
+				that.write500(res);
 			}
 		}
 		dbutils.executeUpdateSQL(sql, params, log, callback);
@@ -199,14 +226,12 @@ module.exports = {
 		var dbutils = require("./dbutils.js");
 		var params = [survey.survey_id, survey.startedat, survey.finishat];
 		var sql = "UPDATE survey SET startedat = $2, finishat = $3 WHERE id = $1";
+		var that = this;
 		var callback = function(sqlOK){
 			if(sqlOK){
-				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-				res.end();
+				that.write200(res);
 			} else {
-				// empty 200 OK response for now
-				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
-				res.end();
+				that.write500(res);
 			}
 		}
 		dbutils.executeUpdateSQL(sql, params, log, callback);
