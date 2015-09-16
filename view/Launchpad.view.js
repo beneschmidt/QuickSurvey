@@ -32,7 +32,6 @@ sap.ui.jsview("quicksurvey.view.Launchpad", {
                     }));
                 }
             }
-
         });
 
         var page = new sap.m.Page({

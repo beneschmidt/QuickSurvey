@@ -194,4 +194,21 @@ module.exports = {
 		}
 		dbutils.executeUpdateSQL(sql, params, log, callback);
 	},
+
+	startSurvey : function(res, req, survey, log){
+		var dbutils = require("./dbutils.js");
+		var params = [survey.survey_id, survey.startedat, survey.finishat];
+		var sql = "UPDATE survey SET startedat = $2, finishat = $3 WHERE id = $1";
+		var callback = function(sqlOK){
+			if(sqlOK){
+				res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+				res.end();
+			} else {
+				// empty 200 OK response for now
+				res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
+				res.end();
+			}
+		}
+		dbutils.executeUpdateSQL(sql, params, log, callback);
+	},
 }

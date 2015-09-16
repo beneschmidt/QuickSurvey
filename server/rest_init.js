@@ -32,6 +32,10 @@ module.exports = {
 			log.info("Updating survey...");
       rest.addSurveyPerform(res, req, req.body.survey, log);
 		});
+		app.post("/QuickSurvey/startSurvey", function(req, res){
+			log.info("Updating survey...");
+      rest.startSurvey(res, req, req.body.survey, log);
+		});
 
 	}
 }

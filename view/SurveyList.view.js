@@ -14,7 +14,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
       type: "Active",
       customData:[new sap.ui.core.CustomData({key: "objectId", value: "{objectId}"})],
       press: function(ev){
-        var object = {id : "PerformSurvey", surveyId: this.getCustomData()[0].getProperty("value"), isNew: true};
+        var object = {id : "StartSurvey", surveyId: this.getCustomData()[0].getProperty("value"), isNew: true};
         sap.ui.getCore().getEventBus().publish("nav", "to", object);
       },
     });
