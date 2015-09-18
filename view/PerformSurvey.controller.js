@@ -11,6 +11,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 
 		this.bus = sap.ui.getCore().getEventBus();
 		this.bus.subscribe("nav", "to", this.navHandler, this);
+
 	},
 
 	navHandler: function(channelId, eventId, data){
@@ -139,31 +140,43 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 
 	updateModelFromAjax: function(json){
 		var survey = json.Survey[0];
-
-		var input = {
-			title   : survey.name,
-			answersChangable : survey.changeanswers,
-			surveyId: survey.objectId,
-			questions: survey.questions
-		};
-		var model = new sap.ui.model.json.JSONModel(input);
-		this.getView().setModel(model, "survey");
-
-		var perform = {
-			survey_id   : model.getProperty("/surveyId"),
-			performed_at : 0,
-			performed_questions: []
-		};
-		for(var i = 0; i < model.getProperty("/questions").length; i++){
-			var question = {
-				question_id : model.getProperty("/questions/"+i+"/objectId"),
-				performed_answers:[]
+		if(survey){
+			var input = {
+				title   : survey.name,
+				answersChangable : survey.changeanswers,
+				surveyId: survey.objectId,
+				questions: survey.questions
 			};
-			perform.performed_questions.push(question);
+			if(survey.startedat && new Date().getTime() > survey.startedat){
+				if(survey.finishat && new Date().getTime() > survey.finishat){
+					this.getView().getModel("info").setProperty("/finished", true);
+				}
+			} else {
+				this.getView().getModel("info").setProperty("/notStarted", true);
+			}
+
+			var model = new sap.ui.model.json.JSONModel(input);
+			this.getView().setModel(model, "survey");
+
+			var perform = {
+				survey_id   : model.getProperty("/surveyId"),
+				performed_at : 0,
+				performed_questions: []
+			};
+			for(var i = 0; i < model.getProperty("/questions").length; i++){
+				var question = {
+					question_id : model.getProperty("/questions/"+i+"/objectId"),
+					performed_answers:[]
+				};
+				perform.performed_questions.push(question);
+			}
+
+			var model = new sap.ui.model.json.JSONModel(perform);
+			this.getView().setModel(model, "perform");
+		} else {
+			this.getView().getModel("info").setProperty("/notExisting", true);
 		}
 
-		var model = new sap.ui.model.json.JSONModel(perform);
-		this.getView().setModel(model, "perform");
 
 		this.updatePage();
 	},
@@ -184,7 +197,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 		}
 
 		var infoModel = new sap.ui.model.json.JSONModel(info);
-	this.getView().setModel(infoModel, "info");
+		this.getView().setModel(infoModel, "info");
 	},
 
 	doNavBack: function(event) {

@@ -66,7 +66,13 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 	getCurrentForm : function(){
 		if(this.getModel("info")){
 			var currentCounter = this.getCurrentCounter();
-			if(currentCounter===this.getModel("survey").getProperty("/questions").length){
+			if(this.getModel("info").getProperty("/notExisting")){
+				return this.createNotPossibleForm("Not existing", "Unfortunately the survey is not existing");
+			} else 	if(this.getModel("info").getProperty("/notStarted")){
+				return this.createNotPossibleForm("notStarted", "Unfortunately the survey is not started yet");
+			} else 	if(this.getModel("info").getProperty("/finished")){
+				return this.createNotPossibleForm("Already finished", "Unfortunately the survey is is already finished");
+			} else 	if(currentCounter===this.getModel("survey").getProperty("/questions").length){
 				return this.createThanksForm();
 			} else {
 				var questionText = this.getModel("survey").getProperty("/questions/"+currentCounter+"/questiontext");
@@ -216,6 +222,41 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 			justifyContent: sap.m.FlexJustifyContent.Center,
 			alignItems: sap.m.FlexAlignItems.Center,
 			items: [oThanksText, oImage, oFinishedText],
+			direction: sap.m.FlexDirection.Column
+		}).addDelegate({
+			onAfterRendering: function () {
+				oImage.setHeight(oButtonContainer.$().height() + "px");
+			}
+		});
+		oForm.addContent(new sap.m.Label());
+		oForm.addContent(oButtonContainer);
+
+		return oForm;
+	},
+
+	createNotPossibleForm: function(title, text){
+		var oForm = new sap.ui.layout.form.SimpleForm({
+			editable        : false,
+			layout          : "ResponsiveGridLayout",
+		});
+		this.getModel("info").setProperty("/title", title);
+		//oForm.addContent(oTitleLabel);
+		var currentCounter = this.getCurrentCounter();
+		var that = this;
+
+		var oText = new sap.m.Title({
+			text: text,
+			textAlign: sap.ui.core.TextAlign.Center,
+			titleStyle: sap.ui.core.TitleLevel.H2
+		});
+
+		var oImage = new sap.m.Image({
+			src: 'img/Smiley_Face.png'
+		})
+		var oButtonContainer = new sap.m.FlexBox({
+			justifyContent: sap.m.FlexJustifyContent.Center,
+			alignItems: sap.m.FlexAlignItems.Center,
+			items: [oText],
 			direction: sap.m.FlexDirection.Column
 		}).addDelegate({
 			onAfterRendering: function () {

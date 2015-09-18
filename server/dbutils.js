@@ -156,9 +156,8 @@ module.exports = {
       });
       query.on('end', function(result) {
         if(result.rowCount===0){
-          that.log.info("no "+table+" received!");
-          that.log.info(result);
-          that.callback();
+          that.log.info("no row received!");
+          that.callback(that.result);
           oClient.end();
         } else {
           that.callback(that.result);
