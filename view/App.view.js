@@ -36,7 +36,7 @@ sap.ui.jsview("quicksurvey.view.App", {
     // to avoid scrollbars on desktop the root view must be set to block display
     this.setDisplayBlock(true);
 
-    this.app = new sap.m.SplitApp({
+    this.app = new sap.m.SplitApp("splitapp", {
       afterDetailNavigate: function() {
         if (sap.ui.Device.system.phone || quicksurvey.app.config.LaunchpadMode) {
           this.hideMaster();
@@ -76,6 +76,7 @@ sap.ui.jsview("quicksurvey.view.App", {
     } else {
       this.app.toMaster("Menu");
     }
+
     return this.app;
   }
 });

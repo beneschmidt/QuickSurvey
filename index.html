@@ -35,9 +35,38 @@
     <link rel="stylesheet" type="text/css" href="css/style.css" />
 
     <script>
+    jQuery.sap.require("sap.ui.core.routing.Router");  // load Router module
+    jQuery.sap.require("sap.ui.core.routing.Route");
+    jQuery.sap.require("sap.m.routing.RouteMatchedHandler");  // load RouteMatchedHandler module
         sap.ui.getCore().attachInit(function() {
             sap.ui.jsview("RootView", "quicksurvey.view.App").placeAt('root');
+
+            var oRoute = new sap.ui.core.routing.Route({
+              name: "test",
+              pattern: "test"
+            });
+            oRoute.attachRouteMatched(function() {
+              console.log("I'm in");
+            });
+            var oRouter = new sap.ui.core.routing.Router(
+              [oRoute],{
+               targetControl: "splitapp",      // targetControl refers to the id of control where all the target views are to be placed
+                                             // this is defined in 'MainView' createcontent method
+            targetAggregation: "detailPages", // targetAggregation refers to aggregation namw of targetControl. For splitApp
+                                             // control there are two Aggregations, 'detailPages' and 'masterPages'
+             viewType: "JS",   // viewType defines type of the target views
+             viewPath: "Views",  // The view path parameter specifies a prefix that prepends the target views. In our case
+                               // target view detail.Categories will be takes as Views.detail.Categories. Please note that
+                               // view Categories is placed under folder Views/detail/
+             clearTarget: false  //The clear target parameter defines a boolean that is used to specify if the aggregation
+                                //should be cleared before adding the view to it.
+             });
+             oRouter.initialize();  // Initialise the Router
         });
+
+
+
+
     </script>
 </head>
 

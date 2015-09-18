@@ -8,6 +8,31 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
 
   createContent: function(oController) {
 
+    var oCustomListItem = new sap.m.StandardListItem({
+      icon: "sap-icon://document-text",
+      description: "{name}",
+      type: "Active",
+      customData:[new sap.ui.core.CustomData({key: "objectId", value: "{objectId}"}),
+      new sap.ui.core.CustomData({key: "startedat", value: "{startedat}"}),
+      new sap.ui.core.CustomData({key: "finishat", value: "{finishat}"})],
+      press: function(ev){
+        var surveyId = this.getCustomData()[0].getProperty("value");
+        var startedat = this.getCustomData()[1].getProperty("value");
+        var finishat = this.getCustomData()[2].getProperty("value");
+        var idToNavTo = "";
+        if(!startedat){
+          idToNavTo="StartSurvey";
+        } else if (finishat && new Date().getTime() < finishat){
+          idToNavTo="PerformSurvey"
+        } else {
+          // TODO should be anaylsis
+          idToNavTo="AddSurvey";
+        }
+        var object = {id : idToNavTo, surveyId: this.getCustomData()[0].getProperty("value"), isNew: true};
+        sap.ui.getCore().getEventBus().publish("nav", "to", object);
+      },
+    });
+
     var oListTemplate = new sap.m.StandardListItem({
       icon: "sap-icon://document-text",
       description: "{name}",
