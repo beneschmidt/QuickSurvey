@@ -1,0 +1,42 @@
+this.oRouter = new sap.ui.core.routing.Router([
+
+                        {
+
+                                        pattern: "jobs/job({ID})",
+
+                                        name: "getDetail",
+
+                                        view: "views.jobDetail",
+
+                                        viewType: sap.ui.core.mvc.ViewType.XML,
+
+                                        targetControl: navContainer,
+
+                                        targetAggregation: "pages",
+
+                                        clearTarget: false
+
+                                }
+
+}
+
+                        ]);
+
+                        var oRouteHandler = new sap.m.routing.RouteMatchedHandler(this.oRouter);  
+
+                        this.oRouter.register("router");  
+
+                        this.oRouter.initialize();
+
+ this.oRouter = sap.ui.core.routing.Router.getRouter("router");  
+	    this.oRouter.attachRouteMatched(
+	    	function(oEvent) {  
+		    var sRoute = oEvent.getParameter("name");	
+		    
+		    if (sRoute === "getDetail") {
+		    	var Id =oEvent.getParameter('arguments').ID;
+ }
+	    });
+	},
+
+ this.oRouter.navTo("getDetail", { ID: oEvt.getSource().getBindingContext().getProperty("ID")});
