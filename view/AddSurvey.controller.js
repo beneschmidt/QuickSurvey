@@ -248,8 +248,6 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 		var model = this.getView().getModel("survey");
 		var that= this;
 		var survey = {
-			name : model.getProperty("/title"),
-			answersChangable : model.getProperty("/answersChangable"),
 			surveyId: model.getProperty("/surveyId")
 		}
 

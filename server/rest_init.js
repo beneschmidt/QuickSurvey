@@ -36,6 +36,10 @@ module.exports = {
 			log.info("starting survey...");
       rest.startSurvey(res, req, req.body.survey, log);
 		});
+		app.post("/QuickSurvey/stopSurvey", function(req, res){
+			log.info("stopping survey...");
+      rest.stopSurvey(res, req, req.body.survey, log);
+		});
 
 	}
 }

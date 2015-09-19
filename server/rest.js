@@ -142,7 +142,7 @@ module.exports = {
 			var survey = dbutils.extractFullSurveyList(result, log).Survey[0];
 			var finishat = survey.finishat;
 			var a = new Date().getTime();
-			if(finishat && a < finishat){
+			if(finishat && (finishat ==-1 || a < finishat)){
 				log.info("not finished: "+finishat);
 				that.addSurveyPerform(res, req, body, log);
 			} else {
@@ -226,6 +226,23 @@ module.exports = {
 		var dbutils = require("./dbutils.js");
 		var params = [survey.survey_id, survey.startedat, survey.finishat];
 		var sql = "UPDATE survey SET startedat = $2, finishat = $3 WHERE id = $1";
+		var that = this;
+		var callback = function(sqlOK){
+			if(sqlOK){
+				that.write200(res);
+			} else {
+				that.write500(res);
+			}
+		}
+		dbutils.executeUpdateSQL(sql, params, log, callback);
+	},
+
+	stopSurvey : function(res, req, survey, log){
+		var dbutils = require("./dbutils.js");
+		var time = new Date().getTime();
+		log.info("stopping survey with new time: "+time+" AND id: "+survey.surveyId)
+		var params = [survey.surveyId,  time];
+		var sql = "UPDATE survey SET finishat = $2 WHERE id = $1";
 		var that = this;
 		var callback = function(sqlOK){
 			if(sqlOK){

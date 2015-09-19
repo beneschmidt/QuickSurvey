@@ -11,7 +11,6 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 
 		this.bus = sap.ui.getCore().getEventBus();
 		this.bus.subscribe("nav", "to", this.navHandler, this);
-
 	},
 
 	navHandler: function(channelId, eventId, data){
@@ -148,7 +147,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 				questions: survey.questions
 			};
 			if(survey.startedat && new Date().getTime() > survey.startedat){
-				if(survey.finishat && new Date().getTime() > survey.finishat){
+				if(survey.finishat && survey.finishat!=-1 && new Date().getTime() > survey.finishat){
 					this.getView().getModel("info").setProperty("/finished", true);
 				}
 			} else {

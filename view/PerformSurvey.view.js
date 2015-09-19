@@ -15,7 +15,6 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		return "quicksurvey.view.PerformSurvey";
 	},
 
-
 	/**
 	* Is initially called once after the Controller has been instantiated. It
 	* is the place where the UI is constructed. Since the Controller is given

@@ -15,7 +15,8 @@ module.exports = {
           questions:[],
           startedat: current.startedat,
           changeanswers: current.changeanswers,
-          finishat: current.finishat
+          finishat: current.finishat,
+          autostop: current.autostop
         }
       }
       if(qid!= current.qid){

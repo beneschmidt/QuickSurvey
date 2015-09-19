@@ -7,18 +7,102 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
   },
 
   createContent: function(oController) {
-
-    var oCustomListItem = new sap.m.StandardListItem({
-      icon: "sap-icon://document-text",
-      description: "{name}",
+    var oCustomListTemplate = new sap.m.CustomListItem({
       type: "Active",
-      customData:[new sap.ui.core.CustomData({key: "objectId", value: "{objectId}"}),
-      new sap.ui.core.CustomData({key: "startedat", value: "{startedat}"}),
-      new sap.ui.core.CustomData({key: "finishat", value: "{finishat}"})],
+      content: [new sap.m.FlexBox({
+        direction: sap.m.FlexDirection.Row,
+        justifyContent: sap.m.FlexJustifyContent.SpaceBetween,
+        items: [
+          new sap.m.Title({
+            text: "{name}",
+            textAlign: sap.ui.core.TextAlign.Left,
+            titleStyle: sap.ui.core.TitleLevel.H3
+          }),
+          new sap.m.Label({
+            text:{
+              parts: [{path: "finishat"}],
+              formatter: function(finishat){
+                if(finishat==-1){
+                  return "running";
+                } else if(finishat+0===0){
+                  return "not started yet"
+                } else if(finishat+0 && new Date().getTime() < finishat){
+                  var date = new Date(finishat- new Date().getTime());
+                  return date.getMinutes()+":"+date.getSeconds();
+                } else{
+                  return "finished";
+                }
+              }
+            },
+          }),
+          new sap.m.FlexBox({
+            direction: sap.m.FlexDirection.Row,
+            justifyContent: sap.m.FlexJustifyContent.End,
+            items: [
+              new sap.m.Button({
+                icon : "sap-icon://bar-code",
+                press: function(oEvent){
+                  var context = oEvent.getSource().getBindingContext();
+                  var surveyId = context.getProperty("objectId");
+                  console.log("QR Code");
+                },
+              }),
+              new sap.m.Button({
+                icon : "sap-icon://media-play",
+                visible:{
+                  parts: [{path: "finishat"}],
+                  formatter: function(finishat){
+                    if(finishat==-1 || finishat+0>0){
+                      return false;
+                    } else {
+                      return true;
+                    }
+                  }
+                },
+                press: function(oEvent){
+                  var context = oEvent.getSource().getBindingContext();
+                  var surveyId = context.getProperty("objectId");
+                  var object = {id : "StartSurvey", surveyId: surveyId, isNew: true};
+                  sap.ui.getCore().getEventBus().publish("nav", "to", object);
+                },
+              }),
+              new sap.m.Button({
+                icon : "sap-icon://stop",
+                visible:{
+                  parts: [{path: "finishat"}],
+                  formatter: function(finishat){
+                    if(finishat==-1 || (finishat+0 && new Date().getTime() < finishat)){
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  },
+                },
+                press: function(oEvent){
+                  var context = oEvent.getSource().getBindingContext();
+                  var surveyId = context.getProperty("objectId");
+                  console.log("stopping survey "+surveyId);
+                  oController.stopSurvey(surveyId);
+                },
+              }),
+              new sap.m.Button({
+                icon : "sap-icon://delete",
+                press: function(oEvent){
+                  var context = oEvent.getSource().getBindingContext();
+                  var surveyId = context.getProperty("objectId");
+                  console.log("deleting survey");
+                  oController.deleteSurvey(surveyId);
+                },
+              }),
+            ]
+          }),
+        ]
+      })],
       press: function(ev){
-        var surveyId = this.getCustomData()[0].getProperty("value");
-        var startedat = this.getCustomData()[1].getProperty("value");
-        var finishat = this.getCustomData()[2].getProperty("value");
+        var context = ev.getSource().getBindingContext();
+        var surveyId = context.getProperty("objectId");
+        var startedat = context.getProperty("startedat");
+        var finishat = context.getProperty("finishat");
         var idToNavTo = "";
         if(!startedat){
           idToNavTo="StartSurvey";
@@ -28,69 +112,13 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
           // TODO should be anaylsis
           idToNavTo="AddSurvey";
         }
-        var object = {id : idToNavTo, surveyId: this.getCustomData()[0].getProperty("value"), isNew: true};
+        var object = {id : idToNavTo, surveyId: surveyId, isNew: true};
         sap.ui.getCore().getEventBus().publish("nav", "to", object);
       },
-    });
-
-    var oListTemplate = new sap.m.StandardListItem({
-      icon: "sap-icon://document-text",
-      description: "{name}",
-      type: "Active",
-      customData:[new sap.ui.core.CustomData({key: "objectId", value: "{objectId}"}),
-      new sap.ui.core.CustomData({key: "startedat", value: "{startedat}"}),
-      new sap.ui.core.CustomData({key: "finishat", value: "{finishat}"})],
-      press: function(ev){
-        var surveyId = this.getCustomData()[0].getProperty("value");
-        var startedat = this.getCustomData()[1].getProperty("value");
-        var finishat = this.getCustomData()[2].getProperty("value");
-        var idToNavTo = "";
-        if(!startedat){
-          idToNavTo="StartSurvey";
-        } else if (finishat && new Date().getTime() < finishat){
-          idToNavTo="PerformSurvey"
-        } else {
-          // TODO should be anaylsis
-          idToNavTo="AddSurvey";
-        }
-        var object = {id : idToNavTo, surveyId: this.getCustomData()[0].getProperty("value"), isNew: true};
-        sap.ui.getCore().getEventBus().publish("nav", "to", object);
-      },
-    });
-    oListTemplate.bindProperty("title", "name");
-    oListTemplate.bindProperty("info", {
-      parts: [
-        {path: "startedat"},
-        {path: "finishat"}
-      ],
-      formatter: function(startedat, finishat){
-        if(!startedat){
-          return "Not yet started";
-        } else if(finishat && new Date().getTime()< finishat){
-          return "Started";
-        } else {
-          return "Finished";
-        }
-      }
-    });
-    oListTemplate.bindProperty("infoState", {
-      parts: [
-        {path: "startedat"},
-        {path: "finishat"}
-      ],
-      formatter: function(startedat, finishat){
-        if(!startedat){
-          return sap.ui.core.ValueState.Error;
-        } else if(finishat && new Date().getTime() < finishat){
-          return sap.ui.core.ValueState.Warning;
-        } else {
-          return sap.ui.core.ValueState.Success;
-        }
-      }
     });
 
     var oList = new sap.m.List({});
-    oList.bindAggregation("items", "/Survey", oListTemplate);
+    oList.bindAggregation("items", "/Survey", oCustomListTemplate);
 
     var oBtnNew = new sap.m.Button({
       icon : "sap-icon://create",

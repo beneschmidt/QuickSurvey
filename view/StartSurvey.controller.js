@@ -13,13 +13,11 @@ sap.ui.controller("quicksurvey.view.StartSurvey", {
 		this.bus.subscribe("nav", "to", this.navHandler, this);
 	},
 
-
 	navHandler: function(channelId, eventId, data){
 		if (eventId === "to" && data.id==="StartSurvey") {
 			this.getView().getModel("startSurvey").setProperty("/survey_id", data.surveyId);
 		}
 	},
-
 
 	clearModel: function(){
 		var startSurvey = {
@@ -42,7 +40,7 @@ sap.ui.controller("quicksurvey.view.StartSurvey", {
 		var model = this.getView().getModel("startSurvey");
 		var that= this;
 		var startedat = new Date().getTime();
-		var finishat = model.getProperty("/autostop") ? startedat+(model.getProperty("/minutes")*1000*60) : 0;
+		var finishat = model.getProperty("/autostop") ? startedat+(model.getProperty("/minutes")*1000*60) : -1;
 		var survey = {
 			survey_id : model.getProperty("/survey_id"),
 			startedat : startedat,
