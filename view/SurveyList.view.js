@@ -15,7 +15,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
         items: [
           new sap.m.Title({
             text: "{name}",
-            textAlign: sap.ui.core.TextAlign.Left,
+            textAlign: sap.ui.core.TextAlign.Center,
             titleStyle: sap.ui.core.TitleLevel.H3
           }),
           new sap.m.Label({

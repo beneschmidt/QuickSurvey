@@ -6,7 +6,7 @@
         title="{i18n>WELCOME_TITLE}"
         enableScrolling="true"
         showNavButton="{device>/isPhone}"
-        navButtonPress="doNavBack" >  
+        navButtonPress="doNavBack" >
         <headerContent>
             <Button
                 icon="sap-icon://home"
@@ -15,7 +15,7 @@
                 press="doNavBackLaunchpad"
                 >
             </Button>
-        </headerContent>              
+        </headerContent>
         <footer>
             <Bar>
             </Bar>
@@ -27,17 +27,9 @@
                 <Text
                     text="{i18n>WELCOME_INFO}"
                     class="welcomeText" >
-                </Text>                 
-                <Text
-                    text="QuickSurvey on GitHub:"
-                    class="welcomeText" >
-                </Text>
-                <Link
-                    text="https://github.com/beneschmidt/QuickSurvey"
-                    href="https://github.com/beneschmidt/QuickSurvey" >
-                </Link>                            
+                </Text>                            
                 <Image
-                    src="img/114_iPhone-Retina_Web_Clip.png" />                
+                    src="img/114_iPhone-Retina_Web_Clip.png" />
             </VBox>
         </content>
     </Page>
