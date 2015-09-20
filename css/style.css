@@ -12,3 +12,7 @@
 	font-size: 1.0rem;
 	margin: 2rem;
 }
+
+.qrCode {
+  cursor:pointer;
+}

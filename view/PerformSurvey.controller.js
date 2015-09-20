@@ -34,7 +34,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			this.getView().page.addContent(form);
 
 			var oController = this;
-			var footerArrayRight = [], footerArrayLeft=[];
+			var footerArrayRight = [], footerArrayLeft=[], footerArrayMiddle=[];
 
 			var currentCounter = this.getView().getCurrentCounter();
 			var numberOfQuestions = this.getView().getModel("survey").getProperty("/questions").length;
@@ -87,8 +87,13 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 				}
 			});
 			footerArrayRight.push(oBtnNew);
+			var oLblCount = new sap.m.Label({
+				text : (currentCounter+1) + " of " + numberOfQuestions,
+			});
+			footerArrayMiddle.push(oLblCount);
 			var bar = new sap.m.Bar({
 				contentRight: footerArrayRight,
+				contentMiddle: footerArrayMiddle,
 				contentLeft: footerArrayLeft
 			});
 

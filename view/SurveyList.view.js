@@ -44,7 +44,31 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
                 press: function(oEvent){
                   var context = oEvent.getSource().getBindingContext();
                   var surveyId = context.getProperty("objectId");
-                  console.log("QR Code");
+                  var flexBox = new sap.m.FlexBox({
+                    height: "100%",
+                    justifyContent: "Center"
+                  });
+                  flexBox.addStyleClass("qrCode");
+                  var dialog = new sap.m.Dialog({
+                    title: "ID: "+surveyId,
+                    contentHeight:"100%",
+                    type: sap.m.DialogType.Standard,
+                    content: [flexBox],
+                    afterClose: function() {
+                      dialog.destroy();
+                    }
+                  }).setStretch(true).open();
+                  var dialogDOM = $("#"+dialog.getId())[0];
+                  var size = Math.min(dialogDOM.offsetHeight, dialogDOM.offsetWidth)-92;
+                  new QRCode(flexBox.getId(), {
+                    text: "http://192.168.1.103:8877/QuickSurvey/perform.html?id="+surveyId,
+                    width: size,
+                    height: size
+                  });
+
+                  $("#"+flexBox.getId())[0].onclick=function(){
+                    dialog.close();
+                  }
                 },
               }),
               new sap.m.Button({
