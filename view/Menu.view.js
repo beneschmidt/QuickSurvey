@@ -37,9 +37,8 @@ sap.ui.jsview("quicksurvey.view.Menu", {
             }),
             content: [oList],
             footer: new sap.m.Bar({
-                contentMiddle: [new sap.m.Link("myproLink", {
-                    text: "v0.1.0",
-                    href: "https://github.com/beneschmidt/QuickSurvey"
+                contentMiddle: [new sap.m.Text({
+                    text: "v0.1.0"
                 })]
             })
         });

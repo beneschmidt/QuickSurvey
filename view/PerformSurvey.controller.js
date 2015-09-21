@@ -54,7 +54,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 				visible: currentCounter === numberOfQuestions,
 				press : function(ev) {
 					sap.ui.getCore().getEventBus().publish("nav", "to", {
-						id : "SurveyList"
+						id : "Launchpad"
 					});
 				}
 			});

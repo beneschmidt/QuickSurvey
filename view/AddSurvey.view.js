@@ -1,6 +1,4 @@
 jQuery.sap.require("sap.ui.layout.form.SimpleForm");
-jQuery.sap.require("sap.ui.unified.Calendar");
-jQuery.sap.require("sap.ui.unified.DateRange");
 
 sap.ui.jsview("quicksurvey.view.AddSurvey", {
 

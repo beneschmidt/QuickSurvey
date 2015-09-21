@@ -28,9 +28,9 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		var oBtnLaunchpad = new sap.m.Button({
 			icon : "sap-icon://home",
 			visible : quicksurvey.app.config.LaunchpadMode,
-			tooltip : "Back to Survey List",
+			tooltip : "Back to Home",
 			press : function(ev) {
-				sap.ui.getCore().getEventBus().publish("nav", "to", {id : "SurveyList"});
+				sap.ui.getCore().getEventBus().publish("nav", "to", {id : "Launchpad"});
 			}
 		});
 		var page =  new sap.m.Page({
