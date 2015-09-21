@@ -33,7 +33,9 @@ module.exports = {
       if(objects[spos].questions[qpos]){
         objects[spos].questions[qpos].answers.push({
           objectId: current.aid,
-          answertext : current.answertext
+          answertext : current.answertext,
+          count : current.count,
+          overallanswercount : current.overallanswercount
         });
       }
     }

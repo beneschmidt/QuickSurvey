@@ -38,57 +38,27 @@ sap.ui.controller("quicksurvey.view.AnalyseSurvey", {
 
 			var currentCounter = this.getView().getCurrentCounter();
 			var numberOfQuestions = this.getView().getModel("survey").getProperty("/questions").length;
-			var canGoBack = this.getView().getModel("survey").getProperty("/answersChangable")? currentCounter > 0 && currentCounter <= numberOfQuestions-1: false;
 			var oBtnPrevious = new sap.m.Button({
 				icon : "sap-icon://arrow-left",
 				tooltip : "previous page",
-				visible : canGoBack,
+				visible : currentCounter>=0,
 				press : function(ev) {
 					oController.getView().previousView();
 				}
 			});
 			footerArrayLeft.push(oBtnPrevious);
-			var oBtnHome = new sap.m.Button({
-				icon : "sap-icon://home",
-				tooltip : "home",
-				visible: currentCounter === numberOfQuestions,
-				press : function(ev) {
-					sap.ui.getCore().getEventBus().publish("nav", "to", {
-						id : "Launchpad"
-					});
-				}
-			});
-			footerArrayRight.push(oBtnHome);
-			// show next button only if something was selected
 			var oBtnNext = new sap.m.Button({
 				icon : "sap-icon://arrow-right",
 				tooltip : "next page",
+				visible: currentCounter < numberOfQuestions-1,
 				press : function(ev) {
 					oController.getView().nextView();
 				}
 			});
-			oBtnNext.bindProperty("visible", "perform>/performed_questions/"+currentCounter+"/performed_answers", function(answers){
-				var hasAlreadySelectedSomething = answers? answers.length>0:false;
-				return currentCounter < numberOfQuestions-1 && hasAlreadySelectedSomething;
-			});
 			footerArrayRight.push(oBtnNext);
-			var oBtnNew = new sap.m.Button({
-				icon : "sap-icon://save",
-				visible : currentCounter === numberOfQuestions-1,
-				tooltip : "Save",
-				press : function(ev) {
-					var answers = oController.getView().getModel("perform").getProperty("/performed_questions/"+currentCounter+"/performed_answers");
-					var hasAlreadySelectedSomething = answers? answers.length>0:false;
-					if(hasAlreadySelectedSomething){
-						oController.sendSurveyInfos();
-					} else {
-						oController.openNothingSelectedDialog();
-					}
-				}
-			});
-			footerArrayRight.push(oBtnNew);
 			var oLblCount = new sap.m.Label({
 				text : (currentCounter+1) + " of " + numberOfQuestions,
+				visible : currentCounter>=0
 			});
 			footerArrayMiddle.push(oLblCount);
 			var bar = new sap.m.Bar({
@@ -125,7 +95,7 @@ sap.ui.controller("quicksurvey.view.AnalyseSurvey", {
 		var that= this;
 
 		$.ajax({
-			url: './survey',
+			url: './surveyAnalysis',
 			type: 'get',
 			//	contentType: "application/json; charset=utf-8",
 			success: function (data) {

@@ -66,6 +66,7 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
 		if(this.getModel("info")){
 			var currentCounter = this.getCurrentCounter();
 			var questionText = this.getModel("survey").getProperty("/questions/"+currentCounter+"/questiontext");
+			this.getModel("info").setProperty("/title", this.getModel("survey").getProperty("/title"));
 			return this.createFormForType(this.getModel("survey").getProperty("/questions/"+currentCounter+"/type"), questionText);
 		}
 	},
@@ -102,12 +103,13 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
 		});
 	},
 
-	createQuestionForm: function(title){
-		this.getModel("info").setProperty("/title", title);
-		var oForm = this.createForm();
-		//oForm.addContent(oTitleLabel);
+	createQuestionForm: function(){
 		var currentCounter = this.getCurrentCounter();
 		var that = this;
+		var layout = new sap.m.FlexBox({
+			direction: sap.m.FlexDirection.Column,
+			alignItems: sap.m.FlexAlignItems.Center
+		});
 
 		var oQuestionText = new sap.m.Text({
 			text: {
@@ -116,12 +118,7 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
 			textAlign: sap.ui.core.TextAlign.Center
 		});
 		oQuestionText.addStyleClass("questionTitle");
-		var oQuestionTextLabel = new sap.m.Label({
-			text : "Question text",
-			labelFor : oQuestionText
-		});
-		//oForm.addContent(oQuestionTextLabel);
-		//oForm.addContent(oQuestionText);
+		layout.addItem(oQuestionText);
 
 		var flexBox = new sap.m.FlexBox({
 			height: "100%",
@@ -129,155 +126,159 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
 			justifyContent: "Center"
 		}).addDelegate({
 			onAfterRendering: function(){
-				var w = 500;
+				var dataset = that.getModel("survey").getProperty("/questions/"+currentCounter+"/answers");
+				var max = 0;
+				for(var i = 0; i < dataset.length; i++){
+					max = Math.max(max, dataset[i].count);
+				}
+				var w = 400;
 				var boxDOM = $("#"+that.page.getId())[0];
 				var h = boxDOM.offsetHeight-120;
 				var barPadding = 1;
+				var yOffset = max>0?(h-20)/max:1;
 
-				var dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
-					11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
+				//Create SVG element
+				var svg = d3.select(".d3")
+				.append("svg")
+				.attr("width", w)
+				.attr("height", h);
 
-					//Create SVG element
-					var svg = d3.select(".d3")
-					.append("svg")
-					.attr("width", w)
-					.attr("height", h);
+				svg.selectAll("rect")
+				.data(dataset)
+				.enter()
+				.append("rect")
+				.attr("x", function(d, i) {
+					return i * (w / dataset.length);
+				})
+				.attr("y", function(d) {
+					return h - (d.count * yOffset) - 2;
+				})
+				.attr("width", w / dataset.length - barPadding)
+				.attr("height", function(d) {
+					return d.count * yOffset + 2;
+				})
+				.attr("fill", "teal");
 
-					svg.selectAll("rect")
-					.data(dataset)
-					.enter()
-					.append("rect")
-					.attr("x", function(d, i) {
-						return i * (w / dataset.length);
-					})
-					.attr("y", function(d) {
-						return h - (d * 10);
-					})
-					.attr("width", w / dataset.length - barPadding)
-					.attr("height", function(d) {
-						return d * 10;
-					})
-					.attr("fill", "teal");
+				// Text
+				svg.selectAll("text")
+				.data(dataset)
+				.enter()
+				.append("text")
+				.text(function(d) {
+					return d.answertext + " ("+d.count+")";
+				})
+				.attr("text-anchor", "middle")
+				.attr("x", function(d, i) {
+					return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;
+				})
+				.attr("y", function(d) {
+					return h - (d.count * yOffset) -5;
+				})
+				.attr("font-family", "sans-serif")
+				.attr("font-size", "11px");
 
-					// Text
-					svg.selectAll("text")
-					.data(dataset)
-					.enter()
-					.append("text")
-					.text(function(d) {
-						return d;
-					})
-					.attr("text-anchor", "middle")
-					.attr("x", function(d, i) {
-						return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;
-					})
-					.attr("y", function(d) {
-						return h - (d * 4) + 14;
-					})
-					.attr("font-family", "sans-serif")
-					.attr("font-size", "11px")
-					.attr("fill", "white");
-				}
-			});
-			flexBox.addStyleClass("d3");
-			oForm.addContent(flexBox);
+			}
+		});
+		flexBox.addStyleClass("d3");
 
-			return oForm;
-		},
+		layout.addItem(flexBox);
 
+		return layout;
+	},
 
 
-		createNextButton: function(currentCounter, numberOfQuestions){
-			var oBtnNext = new sap.m.Button({
-				icon : "sap-icon://arrow-right",
-				tooltip : "next page",
-				press : function(ev) {
-					oController.getView().nextView();
-				}
-			});
-			oBtnNext.bindProperty("visible", "perform>/performed_questions/"+currentCounter+"/performed_answers", function(answers){
-				var hasAlreadySelectedSomething = answers? answers.length>0:false;
-				return currentCounter < numberOfQuestions-1 && hasAlreadySelectedSomething;
-			});
-			return oBtnNext;
-		},
 
-		createThanksForm: function(){
-			var oForm = new sap.ui.layout.form.SimpleForm({
-				editable        : false,
-				layout          : "ResponsiveGridLayout",
-			});
-			this.getModel("info").setProperty("/title", "Thanks");
-			//oForm.addContent(oTitleLabel);
-			var currentCounter = this.getCurrentCounter();
-			var that = this;
+	createNextButton: function(currentCounter, numberOfQuestions){
+		var oBtnNext = new sap.m.Button({
+			icon : "sap-icon://arrow-right",
+			tooltip : "next page",
+			press : function(ev) {
+				oController.getView().nextView();
+			}
+		});
+		oBtnNext.bindProperty("visible", "perform>/performed_questions/"+currentCounter+"/performed_answers", function(answers){
+			var hasAlreadySelectedSomething = answers? answers.length>0:false;
+			return currentCounter < numberOfQuestions-1 && hasAlreadySelectedSomething;
+		});
+		return oBtnNext;
+	},
 
-			var oThanksText = new sap.m.Title({
-				text: "Thank you for participating",
-				textAlign: sap.ui.core.TextAlign.Center,
-				titleStyle: sap.ui.core.TitleLevel.H2
-			});
+	createThanksForm: function(){
+		var oForm = new sap.ui.layout.form.SimpleForm({
+			editable        : false,
+			layout          : "ResponsiveGridLayout",
+		});
+		this.getModel("info").setProperty("/title", "Thanks");
+		//oForm.addContent(oTitleLabel);
+		var currentCounter = this.getCurrentCounter();
+		var that = this;
 
-			var oFinishedText = new sap.m.Title({
-				text: "Unfortunately it was already finished",
-				textAlign: sap.ui.core.TextAlign.Center,
-				visible: {
-					path:"info>/alreadyFinished"
-				}
-			});
+		var oThanksText = new sap.m.Title({
+			text: "Thank you for participating",
+			textAlign: sap.ui.core.TextAlign.Center,
+			titleStyle: sap.ui.core.TitleLevel.H2
+		});
 
-			var oImage = new sap.m.Image({
-				src: 'img/Smiley_Face.png'
-			})
-			var oButtonContainer = new sap.m.FlexBox({
-				justifyContent: sap.m.FlexJustifyContent.Center,
-				alignItems: sap.m.FlexAlignItems.Center,
-				items: [oThanksText, oImage, oFinishedText],
-				direction: sap.m.FlexDirection.Column
-			}).addDelegate({
-				onAfterRendering: function () {
-					oImage.setHeight(oButtonContainer.$().height() + "px");
-				}
-			});
-			oForm.addContent(new sap.m.Label());
-			oForm.addContent(oButtonContainer);
+		var oFinishedText = new sap.m.Title({
+			text: "Unfortunately it was already finished",
+			textAlign: sap.ui.core.TextAlign.Center,
+			visible: {
+				path:"info>/alreadyFinished"
+			}
+		});
 
-			return oForm;
-		},
+		var oImage = new sap.m.Image({
+			src: 'img/Smiley_Face.png'
+		})
+		var oButtonContainer = new sap.m.FlexBox({
+			justifyContent: sap.m.FlexJustifyContent.Center,
+			alignItems: sap.m.FlexAlignItems.Center,
+			items: [oThanksText, oImage, oFinishedText],
+			direction: sap.m.FlexDirection.Column
+		}).addDelegate({
+			onAfterRendering: function () {
+				oImage.setHeight(oButtonContainer.$().height() + "px");
+			}
+		});
+		oForm.addContent(new sap.m.Label());
+		oForm.addContent(oButtonContainer);
 
-		createNotPossibleForm: function(title, text){
-			var oForm = new sap.ui.layout.form.SimpleForm({
-				editable        : false,
-				layout          : "ResponsiveGridLayout",
-			});
-			this.getModel("info").setProperty("/title", title);
-			//oForm.addContent(oTitleLabel);
-			var currentCounter = this.getCurrentCounter();
-			var that = this;
+		return oForm;
+	},
 
-			var oText = new sap.m.Text({
-				text: text,
-				textAlign: sap.ui.core.TextAlign.Center
-			});
-			oText.addStyleClass("questionTitle")
+	createNotPossibleForm: function(title, text){
+		var oForm = new sap.ui.layout.form.SimpleForm({
+			editable        : false,
+			layout          : "ResponsiveGridLayout",
+		});
+		this.getModel("info").setProperty("/title", title);
+		//oForm.addContent(oTitleLabel);
+		var currentCounter = this.getCurrentCounter();
+		var that = this;
 
-			var oImage = new sap.m.Image({
-				src: 'img/Smiley_Face.png'
-			})
-			var oButtonContainer = new sap.m.FlexBox({
-				justifyContent: sap.m.FlexJustifyContent.Center,
-				alignItems: sap.m.FlexAlignItems.Center,
-				items: [oText],
-				direction: sap.m.FlexDirection.Column
-			}).addDelegate({
-				onAfterRendering: function () {
-					oImage.setHeight(oButtonContainer.$().height() + "px");
-				}
-			});
-			oForm.addContent(new sap.m.Label());
-			oForm.addContent(oButtonContainer);
+		var oText = new sap.m.Text({
+			text: text,
+			textAlign: sap.ui.core.TextAlign.Center
+		});
+		oText.addStyleClass("questionTitle")
 
-			return oForm;
-		},
+		var oImage = new sap.m.Image({
+			src: 'img/Smiley_Face.png'
+		})
+		var oButtonContainer = new sap.m.FlexBox({
+			justifyContent: sap.m.FlexJustifyContent.Center,
+			alignItems: sap.m.FlexAlignItems.Center,
+			items: [oText],
+			direction: sap.m.FlexDirection.Column
+		}).addDelegate({
+			onAfterRendering: function () {
+				oImage.setHeight(oButtonContainer.$().height() + "px");
+			}
+		});
+		oForm.addContent(new sap.m.Label());
+		oForm.addContent(oButtonContainer);
 
-	});
+		return oForm;
+	},
+
+});

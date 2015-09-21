@@ -41,6 +41,23 @@ module.exports = {
 		dbutils.executeSelectSQL(sql, params, log, callback);
 	},
 
+	getSurveyAnalysisList : function(res, req, log){
+		var dbutils = require("./dbutils.js");
+		var params = [req.query.id];
+		var sql = "SELECT * FROM view_survey_with_count WHERE sid = $1";
+		log.info("requesting SurveyAnalysis with id "+req.query.id);
+		var that = this;
+		var callback = function(result, error){
+			if(error){
+				write500(res);
+			} else {
+				var toSend = dbutils.extractFullSurveyList(result, log);
+				that.write200(res, toSend);
+			}
+		}
+		dbutils.executeSelectSQL(sql, params, log, callback);
+	},
+
 	write500:function(res){
 		res.writeHead(500, "not okay", {'Content-Type': 'text/html'});
 		res.end();

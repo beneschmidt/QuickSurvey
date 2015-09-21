@@ -18,28 +18,31 @@ module.exports = {
 		});
 		app.post("/QuickSurvey/addNewSurvey", function(req, res){
 			log.info("Adding a new survey...");
-      rest.addOrUpdateSurvey(res, req, req.body.survey, log);
+			rest.addOrUpdateSurvey(res, req, req.body.survey, log);
 		});
 		app.post("/QuickSurvey/updateSurvey", function(req, res){
 			log.info("Updating survey...");
-      rest.addOrUpdateSurvey(res, req, req.body.survey, log);
+			rest.addOrUpdateSurvey(res, req, req.body.survey, log);
 		});
 		app.post("/QuickSurvey/deleteSurvey", function(req, res){
 			log.info("Deleting survey...");
-      rest.deleteSurvey(res, req, req.body.survey, log);
+			rest.deleteSurvey(res, req, req.body.survey, log);
 		});
 		app.post("/QuickSurvey/performSurvey", function(req, res){
 			log.info("performing survey...");
-      rest.performSurveyIfNotFinished(res, req, req.body.survey, log);
+			rest.performSurveyIfNotFinished(res, req, req.body.survey, log);
 		});
 		app.post("/QuickSurvey/startSurvey", function(req, res){
 			log.info("starting survey...");
-      rest.startSurvey(res, req, req.body.survey, log);
+			rest.startSurvey(res, req, req.body.survey, log);
 		});
 		app.post("/QuickSurvey/stopSurvey", function(req, res){
 			log.info("stopping survey...");
-      rest.stopSurvey(res, req, req.body.survey, log);
+			rest.stopSurvey(res, req, req.body.survey, log);
 		});
-
+		app.get("/QuickSurvey/surveyAnalysis", function(req, res){
+			log.info("getting survey with analysis data...");
+			rest.getSurveyAnalysisList(res, req, log);
+		});
 	}
 }
