@@ -1,16 +1,16 @@
 /* Custom Styles  */
 #ui5Logo {
-    padding-left: 10px;
+  padding-left: 10px;
 }
 #myproLink {
-    color: #ffffff;
+  color: #ffffff;
 }
 #myproLinkLP {
-    color: #ffffff;
+  color: #ffffff;
 }
 .welcomeText {
-	font-size: 1.0rem;
-	margin: 2rem;
+  font-size: 1.0rem;
+  margin: 2rem;
 }
 
 .qrCode {
@@ -19,4 +19,12 @@
 
 .questionTitle{
   font-weight: bold;
+}
+
+div.bar {
+  display: inline-block;
+  width: 20px;
+  height: 75px;	/* Gets overriden by D3-assigned height below */
+  margin-right: 2px;
+  background-color: teal;
 }

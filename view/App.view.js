@@ -66,6 +66,7 @@ sap.ui.jsview("quicksurvey.view.App", {
       this.app.addDetailPage(sap.ui.jsview("PerformSurvey", "quicksurvey.view.PerformSurvey"));
       this.app.addDetailPage(sap.ui.jsview("AddSurvey", "quicksurvey.view.AddSurvey"));
       this.app.addDetailPage(sap.ui.jsview("StartSurvey", "quicksurvey.view.StartSurvey"));
+      this.app.addDetailPage(sap.ui.jsview("AnalyseSurvey", "quicksurvey.view.AnalyseSurvey"));
 
       // navigate to the first page in both master and detail areas.
       // the toMaster must be called after calling the toDetail, because both of them point to the same reference in phone and

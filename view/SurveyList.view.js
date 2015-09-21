@@ -129,12 +129,12 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
         var finishat = context.getProperty("finishat");
         var idToNavTo = "";
         if(!startedat){
-          idToNavTo="StartSurvey";
+          idToNavTo="AddSurvey";
         } else if (finishat && new Date().getTime() < finishat){
           idToNavTo="PerformSurvey"
         } else {
           // TODO should be anaylsis
-          idToNavTo="AddSurvey";
+          idToNavTo="AnalyseSurvey";
         }
         var object = {id : idToNavTo, surveyId: surveyId, isNew: true};
         sap.ui.getCore().getEventBus().publish("nav", "to", object);
