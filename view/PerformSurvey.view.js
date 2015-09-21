@@ -68,7 +68,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 			if(this.getModel("info").getProperty("/notExisting")){
 				return this.createNotPossibleForm("Not existing", "Unfortunately the survey is not existing");
 			} else 	if(this.getModel("info").getProperty("/notStarted")){
-				return this.createNotPossibleForm("notStarted", "Unfortunately the survey is not started yet");
+				return this.createNotPossibleForm("Not started", "Unfortunately the survey is not started yet");
 			} else 	if(this.getModel("info").getProperty("/finished")){
 				return this.createNotPossibleForm("Already finished", "Unfortunately the survey is is already finished");
 			} else 	if(currentCounter===this.getModel("survey").getProperty("/questions").length){
@@ -119,13 +119,13 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		var currentCounter = this.getCurrentCounter();
 		var that = this;
 
-		var oQuestionText = new sap.m.Title({
+		var oQuestionText = new sap.m.Text({
 			text: {
 				path: "survey>/questions/"+currentCounter+"/questiontext"
 			},
-			textAlign: sap.ui.core.TextAlign.Center,
-			titleStyle: sap.ui.core.TitleLevel.H1
+			textAlign: sap.ui.core.TextAlign.Center
 		});
+		oQuestionText.addStyleClass("questionTitle");
 		var oQuestionTextLabel = new sap.m.Label({
 			text : "Question text",
 			labelFor : oQuestionText
@@ -243,11 +243,11 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		var currentCounter = this.getCurrentCounter();
 		var that = this;
 
-		var oText = new sap.m.Title({
+		var oText = new sap.m.Text({
 			text: text,
-			textAlign: sap.ui.core.TextAlign.Center,
-			titleStyle: sap.ui.core.TitleLevel.H2
+			textAlign: sap.ui.core.TextAlign.Center
 		});
+		oText.addStyleClass("questionTitle")
 
 		var oImage = new sap.m.Image({
 			src: 'img/Smiley_Face.png'

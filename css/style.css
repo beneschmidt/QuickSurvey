@@ -16,3 +16,7 @@
 .qrCode {
   cursor:pointer;
 }
+
+.questionTitle{
+  font-weight: bold;
+}

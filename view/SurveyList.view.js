@@ -61,7 +61,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
                   var dialogDOM = $("#"+dialog.getId())[0];
                   var size = Math.min(dialogDOM.offsetHeight, dialogDOM.offsetWidth)-92;
                   new QRCode(flexBox.getId(), {
-                    text: "http://192.168.1.103:8877/QuickSurvey/perform.html?id="+surveyId,
+                    text: "http://192.168.1.102:8877/QuickSurvey/perform.html?id="+surveyId,
                     width: size,
                     height: size
                   });
