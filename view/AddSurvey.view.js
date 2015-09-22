@@ -83,6 +83,14 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 				// create grades
 				return this.createQuestionForm("Grades question");
 			}
+			case 3: {
+				// create grades
+				return this.createSelectionForm("Single selection", false);
+			}
+			case 4: {
+				// create grades
+				return this.createSelectionForm("Mutliple selection", true);
+			}
 			default: {
 				// not sure
 			}
@@ -150,10 +158,10 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		return oForm;
 	},
 
-	createYesNoForm: function(){
+	createSelectionForm: function(title, multiple){
 		var oForm = this.createForm();
 		var oTitleLabel = new sap.m.Label({
-			text : "Yes/No question",
+			text : title,
 		});
 		oForm.addContent(oTitleLabel);
 		var currentCounter = this.getCurrentCounter();
@@ -162,26 +170,61 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 				path: "survey>/questions/"+currentCounter+"/questiontext"
 			}
 		});
+
 		var oQuestionTextLabel = new sap.m.Label({
 			text : "Question text",
 			labelFor : oQuestionText
 		});
 		oForm.addContent(oQuestionTextLabel);
 		oForm.addContent(oQuestionText);
-		var that = this;
 
-		var oYesItem = new sap.m.StandardListItem({
-			title: "Yes"
-		});
-		var oNoItem = new sap.m.StandardListItem({
-			title: "No"
-		});
-		var oAnswerList = new sap.m.List({
-			mode: sap.m.ListMode.None,
-			items: [oYesItem, oNoItem]
+		var oAnswerList = new sap.m.ListBase();
+		oAnswerList.bindAggregation("items", "survey>/questions/"+currentCounter+"/answers", function(sId, oContext) {
+			var value = oContext.getProperty("answertext");
+			var removeButton = new sap.m.Button({
+				icon : "sap-icon://sys-cancel",
+				visible: oContext.getModel().getProperty(oContext.getPath().substring(0, oContext.getPath().lastIndexOf("/"))).length > 2,
+				press: function(){
+					var path = oContext.getPath().substring(0, oContext.getPath().lastIndexOf("/"));
+					var currentIndex = oContext.getPath().substring(oContext.getPath().lastIndexOf("/")+1)  ;
+					var array = oContext.getModel().getProperty(path);
+					array.splice(currentIndex, 1);
+					oContext.getModel().setProperty(path, array);
+				}
+			});
+			var addButton = new sap.m.Button({
+				icon : "sap-icon://sys-add",
+				press: function(){
+					var path = oContext.getPath().substring(0, oContext.getPath().lastIndexOf("/"));
+					var nextIndex = oContext.getPath().substring(oContext.getPath().lastIndexOf("/")+1) + 1;
+					var array = oContext.getModel().getProperty(path);
+					array.splice(nextIndex, 0, {answertext:""});
+					oContext.getModel().setProperty(path, array);
+				}
+			});
+			var inputField = new sap.m.Input({
+				value: value,
+				width: "100%"
+			}).addStyleClass("multipleListItemInput")
+			.attachLiveChange(function(oControlEvent){
+				oContext.getModel().setProperty(oContext.getPath()+"/answertext", oControlEvent.getParameters().value);
+			});
+			var flexBox = new sap.m.FlexBox({
+				justifyContent: sap.m.FlexJustifyContent.SpaceBetween,
+				direction: sap.m.FlexDirection.Row,
+				alignItems: sap.m.FlexAlignItems.Start,
+				items: [inputField, addButton, removeButton]
+			}).addDelegate({
+				onAfterRendering: function(){
+					$("#"+flexBox.getId())[0].children[0].classList.add("fullWidthTextField");
+				}
+			});
+			return new sap.m.CustomListItem({
+				content: [flexBox],
+			});
 		});
 		var oAnswersLabel = new sap.m.Label({
-			text : "Answers",
+			text : multiple?"Answers (multiple)": "Answers",
 			labelFor : oAnswerList
 		});
 		oForm.addContent(oAnswersLabel);
@@ -243,10 +286,24 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			new sap.ui.core.CustomData({key: "items", value: [{answertext: "1"},{answertext:"2"},{answertext:"3"},{answertext:"4"},{answertext:"5"}]})]
 			//new sap.ui.core.CustomData({key: "items", value: [{test: "0",answertext: "one"},{test: "1",answertext:"two"}]})]
 		});
+		var listItemSingleSelection = new sap.m.StandardListItem({
+			title: "Single selection",
+			customData:[new sap.ui.core.CustomData({key: "type", value: 3}),
+			new sap.ui.core.CustomData({key: "multiple", value: false}),
+			new sap.ui.core.CustomData({key: "items", value: [{answertext: ""},{answertext:""}]})]
+			//new sap.ui.core.CustomData({key: "items", value: [{test: "0",answertext: "one"},{test: "1",answertext:"two"}]})]
+		});
+		var listItemMultipleSelection = new sap.m.StandardListItem({
+			title: "Multiple selection",
+			customData:[new sap.ui.core.CustomData({key: "type", value: 4}),
+			new sap.ui.core.CustomData({key: "multiple", value: true}),
+			new sap.ui.core.CustomData({key: "items", value: [{answertext: ""},{answertext:""}]})]
+			//new sap.ui.core.CustomData({key: "items", value: [{test: "0",answertext: "one"},{test: "1",answertext:"two"}]})]
+		});
 		var oSelectDialog = new sap.m.SelectDialog({
 			title: "Add new Question",
 			noDataText: "Nothing possible",
-			items : [listItemYesNo, listItemGrades],
+			items : [listItemYesNo, listItemGrades, listItemSingleSelection, listItemMultipleSelection],
 			confirm: function(evt){
 				var nextCounter = that.getCurrentCounter()+1;
 				var customData = evt.getParameters().selectedItems[0].getCustomData();
