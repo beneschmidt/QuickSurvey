@@ -72,20 +72,7 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
 	},
 
 	createFormForType:function(type, questionText){
-		// type 1: ja/nein
-		// type 2: grades
-		switch(type){
-			case 1: {
-				return this.createQuestionForm(questionText);
-			}
-			case 2: {
-				// create grades
-				return this.createQuestionForm(questionText);
-			}
-			default: {
-				// not sure
-			}
-		}
+		return this.createQuestionForm(questionText);
 	},
 
 	createForm: function(){
@@ -143,6 +130,7 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
 				.attr("width", w)
 				.attr("height", h);
 
+
 				svg.selectAll("rect")
 				.data(dataset)
 				.enter()
@@ -157,25 +145,29 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
 				.attr("height", function(d) {
 					return d.count * yOffset + 2;
 				})
-				.attr("fill", "teal");
+				.attr("fill", "teal")
+				.append("svg:title")
+				.text(function(d) { return d.answertext + "\n("+d.count+")"; });
 
 				// Text
 				svg.selectAll("text")
 				.data(dataset)
 				.enter()
 				.append("text")
+				.attr("width", w / dataset.length - barPadding)
 				.text(function(d) {
 					return d.answertext + " ("+d.count+")";
 				})
-				.attr("text-anchor", "middle")
+				.attr("text-anchor", "left")
 				.attr("x", function(d, i) {
-					return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;
+					return i * (w / dataset.length) + 2;
 				})
 				.attr("y", function(d) {
 					return h - (d.count * yOffset) -5;
 				})
 				.attr("font-family", "sans-serif")
 				.attr("font-size", "11px");
+
 
 			}
 		});
@@ -185,8 +177,6 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
 
 		return layout;
 	},
-
-
 
 	createNextButton: function(currentCounter, numberOfQuestions){
 		var oBtnNext = new sap.m.Button({

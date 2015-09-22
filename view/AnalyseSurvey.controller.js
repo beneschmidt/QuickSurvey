@@ -41,7 +41,7 @@ sap.ui.controller("quicksurvey.view.AnalyseSurvey", {
 			var oBtnPrevious = new sap.m.Button({
 				icon : "sap-icon://arrow-left",
 				tooltip : "previous page",
-				visible : currentCounter>=0,
+				visible : currentCounter>0,
 				press : function(ev) {
 					oController.getView().previousView();
 				}
