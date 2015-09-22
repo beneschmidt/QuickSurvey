@@ -81,20 +81,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 	},
 
 	createFormForType:function(type, questionText){
-		// type 1: ja/nein
-		// type 2: grades
-		switch(type){
-			case 1: {
-				return this.createQuestionForm(questionText);
-			}
-			case 2: {
-				// create grades
-				return this.createQuestionForm(questionText);
-			}
-			default: {
-				// not sure
-			}
-		}
+		return this.createQuestionForm(questionText);
 	},
 
 	createForm: function(){
@@ -155,15 +142,24 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		});
 
 		oAnswerList.attachSelectionChange(function(oControlEvent){
-			var selectedAnswers = oControlEvent.getParameters().listItems;
-			var peformedAnswers = [];
-			for(var i = 0; i < selectedAnswers.length; i++){
-				peformedAnswers.push({
-					answer_id: selectedAnswers[i].getCustomData()[0].getProperty("value"),
+			var selectedAnswer = oControlEvent.getParameters().listItem;
+			var selected = oControlEvent.getParameters().selected;
+			var answer_id = selectedAnswer.getCustomData()[0].getProperty("value");
+			var currentArray =that.getModel("perform").getProperty("/performed_questions/"+that.getCurrentCounter()+"/performed_answers");
+			if(selected){
+				currentArray.push({
+					answer_id: selectedAnswer.getCustomData()[0].getProperty("value"),
 					freetext:""
 				});
+			} else {
+				for(var i = 0; i < currentArray.length; i++){
+					if(currentArray[i].answer_id == answer_id){
+						currentArray.splice(i, 1);
+						break;
+					}
+				}
 			}
-			var array = that.getModel("perform").setProperty("/performed_questions/"+that.getCurrentCounter()+"/performed_answers", peformedAnswers);
+			var array = that.getModel("perform").setProperty("/performed_questions/"+that.getCurrentCounter()+"/performed_answers", currentArray);
 		});
 		var oAnswersLabel = new sap.m.Label({
 			text : "Answers",

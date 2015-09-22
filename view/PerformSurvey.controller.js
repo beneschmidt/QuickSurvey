@@ -63,13 +63,16 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			var oBtnNext = new sap.m.Button({
 				icon : "sap-icon://arrow-right",
 				tooltip : "next page",
+				visible: currentCounter < numberOfQuestions,
 				press : function(ev) {
-					oController.getView().nextView();
+					var answers = oController.getView().getModel("perform").getProperty("/performed_questions/"+currentCounter+"/performed_answers");
+					var hasAlreadySelectedSomething = answers? answers.length>0:false;
+					if(hasAlreadySelectedSomething){
+						oController.getView().nextView();
+					} else {
+						oController.openNothingSelectedDialog();
+					}
 				}
-			});
-			oBtnNext.bindProperty("visible", "perform>/performed_questions/"+currentCounter+"/performed_answers", function(answers){
-				var hasAlreadySelectedSomething = answers? answers.length>0:false;
-				return currentCounter < numberOfQuestions-1 && hasAlreadySelectedSomething;
 			});
 			footerArrayRight.push(oBtnNext);
 			var oBtnNew = new sap.m.Button({
