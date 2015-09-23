@@ -81,7 +81,11 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 	},
 
 	createFormForType:function(type, questionText){
-		return this.createQuestionForm(questionText);
+		if(type==5){
+			return this.createFreeTextForm(questionText);
+		} else {
+			return this.createQuestionForm(questionText);
+		}
 	},
 
 	createForm: function(){
@@ -167,6 +171,38 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		});
 		oForm.addContent(oAnswersLabel);
 		oForm.addContent(oAnswerList);
+
+		return oForm;
+	},
+
+	createFreeTextForm: function(){
+		this.getModel("info").setProperty("/title", "Free Text");
+		var oForm = this.createForm();
+		var currentCounter = this.getCurrentCounter();
+		var that = this;
+
+		var oQuestionText = new sap.m.Text({
+			text: {
+				path: "survey>/questions/"+currentCounter+"/questiontext"
+			},
+			textAlign: sap.ui.core.TextAlign.Center
+		});
+		oQuestionText.addStyleClass("questionTitle");
+		oForm.addContent(oQuestionText);
+		var that = this;
+
+		// change answers
+		var oAnswer = new sap.m.TextArea({
+			value: {
+				path: "perform>/performed_questions/"+currentCounter+"/performed_answers/0/freetext"
+			}
+		});
+		var oAnswerLabel = new sap.m.Label({
+			text : "Free text answer",
+			labelFor : oAnswer
+		});
+		oForm.addContent(oAnswerLabel);
+		oForm.addContent(oAnswer);
 
 		return oForm;
 	},

@@ -91,6 +91,10 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 				// create grades
 				return this.createSelectionForm("Mutliple selection", true);
 			}
+			case 5: {
+				// create grades
+				return this.createFreeTextForm();
+			}
 			default: {
 				// not sure
 			}
@@ -112,7 +116,6 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		});
 	},
 
-	// can't be in renderer
 	createTitleForm: function(){
 		var oForm = this.createForm();
 		var oTitle = new sap.m.Input({
@@ -270,6 +273,44 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		return oForm;
 	},
 
+	createFreeTextForm: function(){
+		var oForm = this.createForm();
+		var oTitleLabel = new sap.m.Label({
+			text : "Free Text",
+		});
+		oForm.addContent(oTitleLabel);
+		var currentCounter = this.getCurrentCounter();
+		var oQuestionText = new sap.m.Input({
+			value: {
+				path: "survey>/questions/"+currentCounter+"/questiontext"
+			}
+		});
+
+		var oQuestionTextLabel = new sap.m.Label({
+			text : "Question text",
+			labelFor : oQuestionText
+		});
+		oForm.addContent(oQuestionTextLabel);
+		oForm.addContent(oQuestionText);
+		var that = this;
+
+		// change answers
+		var oAnswer = new sap.m.TextArea({
+			enabled: false,
+			value: {
+				path: "survey>/questions/"+currentCounter+"/answers/0/answertext"
+			}
+		});
+		var oAnswerLabel = new sap.m.Label({
+			text : "Free text answer",
+			labelFor : oAnswer
+		});
+		oForm.addContent(oAnswerLabel);
+		oForm.addContent(oAnswer);
+
+		return oForm;
+	},
+
 	createSelectDialogCombo: function(){
 		var that = this;
 		// add new question dialog
@@ -300,10 +341,17 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			new sap.ui.core.CustomData({key: "items", value: [{answertext: ""},{answertext:""}]})]
 			//new sap.ui.core.CustomData({key: "items", value: [{test: "0",answertext: "one"},{test: "1",answertext:"two"}]})]
 		});
+		var listItemFreeText = new sap.m.StandardListItem({
+			title: "Free text",
+			customData:[new sap.ui.core.CustomData({key: "type", value: 5}),
+			new sap.ui.core.CustomData({key: "multiple", value: false}),
+			new sap.ui.core.CustomData({key: "items", value: [{answertext: "free text"}]})]
+			//new sap.ui.core.CustomData({key: "items", value: [{test: "0",answertext: "one"},{test: "1",answertext:"two"}]})]
+		});
 		var oSelectDialog = new sap.m.SelectDialog({
 			title: "Add new Question",
 			noDataText: "Nothing possible",
-			items : [listItemYesNo, listItemGrades, listItemSingleSelection, listItemMultipleSelection],
+			items : [listItemYesNo, listItemGrades, listItemSingleSelection, listItemMultipleSelection, listItemFreeText],
 			confirm: function(evt){
 				var nextCounter = that.getCurrentCounter()+1;
 				var customData = evt.getParameters().selectedItems[0].getCustomData();

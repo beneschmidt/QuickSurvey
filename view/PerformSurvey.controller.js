@@ -175,6 +175,12 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 					question_id : model.getProperty("/questions/"+i+"/objectId"),
 					performed_answers:[]
 				};
+				if(model.getProperty("/questions/"+i+"/type")==5){
+					question.performed_answers.push({
+						answer_id : model.getProperty("/questions/"+i+"/answers/0/objectId"),
+						freetext: ""
+					})
+				}
 				perform.performed_questions.push(question);
 			}
 
