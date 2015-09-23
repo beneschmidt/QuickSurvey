@@ -21,7 +21,7 @@ sap.ui.jsview("quicksurvey.view.Launchpad", {
       }
     });
     var oSearchBarLabel = new sap.m.Label({
-      text : "Search by ID",
+      text : "{i18n>SEARCH_BY_ID}",
       labelFor : oSearchBar
     });
     form.addContent(oSearchBarLabel);
