@@ -35,7 +35,8 @@ module.exports = {
           objectId: current.aid,
           answertext : current.answertext,
           count : current.count,
-          overallanswercount : current.overallanswercount
+          overallanswercount : current.overallanswercount,
+          freetext: current.freetext
         });
       }
     }

@@ -71,26 +71,6 @@ sap.ui.controller("quicksurvey.view.AnalyseSurvey", {
 		}
 	},
 
-	openNothingSelectedDialog : function(){
-		var dialog = new sap.m.Dialog({
-			title: "nothing selected",
-			type: sap.m.DialogType.Message,
-			state: sap.ui.core.ValueState.Warning,
-			content: [new sap.m.Text({
-				text: "Please select an answer before sending the survey. Thanks",
-				textAlign: sap.ui.core.TextAlign.Center
-			})]
-		})
-		var button = new sap.m.Button({
-			text: "OK",
-			press: function(oControlEvent){
-				dialog.close();
-			}
-		});
-		dialog.setEndButton(button);
-		dialog.open();
-	},
-
 	loadData: function(id){
 		var that= this;
 
@@ -131,26 +111,9 @@ sap.ui.controller("quicksurvey.view.AnalyseSurvey", {
 
 			var model = new sap.ui.model.json.JSONModel(input);
 			this.getView().setModel(model, "survey");
-
-			var perform = {
-				survey_id   : model.getProperty("/surveyId"),
-				performed_at : 0,
-				performed_questions: []
-			};
-			for(var i = 0; i < model.getProperty("/questions").length; i++){
-				var question = {
-					question_id : model.getProperty("/questions/"+i+"/objectId"),
-					performed_answers:[]
-				};
-				perform.performed_questions.push(question);
-			}
-
-			var model = new sap.ui.model.json.JSONModel(perform);
-			this.getView().setModel(model, "perform");
 		} else {
 			this.getView().getModel("info").setProperty("/notExisting", true);
 		}
-
 
 		this.updatePage();
 	},
@@ -176,40 +139,6 @@ sap.ui.controller("quicksurvey.view.AnalyseSurvey", {
 
 	doNavBack: function(event) {
 		this.bus.publish("nav", "back");
-	},
-
-	sendSurveyInfos: function(event){
-		var controller = this;
-		var model = this.getView().getModel("perform");
-		var that= this;
-		var survey = {
-			survey_id : model.getProperty("/survey_id"),
-			performed_at : new Date().getTime(),
-			performed_questions: model.getProperty("/performed_questions")
-		};
-
-		$.ajax({
-			url: './AnalyseSurvey',
-			type: 'post',
-			//	contentType: "application/json; charset=utf-8",
-			success: function (data) {
-				var data =JSON.parse(data);
-				that.getView().getModel("info").setProperty("/alreadyFinished", !data.ok);
-				that.getView().nextView();
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				if(jqXHR.readyState === 0){
-					console.log("Server unreachable");
-				} else {
-					console.log("An unknown error occured: "+textStatus);
-				}
-				controller.clearModel();
-				sap.ui.getCore().getEventBus().publish("nav", "to", {
-					id : "SurveyList"
-				});
-			},
-			data: { survey: survey }
-		});
 	},
 
 });

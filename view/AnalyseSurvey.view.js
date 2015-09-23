@@ -72,7 +72,11 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
 	},
 
 	createFormForType:function(type, questionText){
-		return this.createQuestionForm(questionText);
+		if(type==5){
+			return this.createFreeTextForm();
+		} else {
+			return this.createQuestionForm(questionText);
+		}
 	},
 
 	createForm: function(){
@@ -167,8 +171,6 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
 				})
 				.attr("font-family", "sans-serif")
 				.attr("font-size", "11px");
-
-
 			}
 		});
 		flexBox.addStyleClass("d3");
@@ -176,6 +178,58 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
 		layout.addItem(flexBox);
 
 		return layout;
+	},
+
+
+	createFreeTextForm: function(){
+		var currentCounter = this.getCurrentCounter();
+		var that = this;
+		var oForm = new sap.ui.layout.form.SimpleForm({
+			editable        : false,
+			layout          : "ResponsiveGridLayout",
+		});
+
+		var oQuestionText = new sap.m.Text({
+			text: {
+				path: "survey>/questions/"+currentCounter+"/questiontext"
+			},
+			textAlign: sap.ui.core.TextAlign.Center
+		});
+		oQuestionText.addStyleClass("questionTitle");
+		oForm.addContent(oQuestionText);
+
+		var oAnswerList = new sap.m.ListBase();
+		oAnswerList.bindAggregation("items", "survey>/questions/"+currentCounter+"/answers", function(sId, oContext) {
+			var inputField = new sap.m.TextArea({
+				value: oContext.getProperty("freetext"),
+				editable: false,
+				width: "100%"
+			}).addStyleClass("multipleListItemInput");
+			var counter = new sap.m.Text({
+				text : oContext.getProperty("count")
+			});
+			var flexBox = new sap.m.FlexBox({
+				justifyContent: sap.m.FlexJustifyContent.SpaceBetween,
+				direction: sap.m.FlexDirection.Row,
+				alignItems: sap.m.FlexAlignItems.Start,
+				items: [inputField, counter]
+			}).addDelegate({
+				onAfterRendering: function(){
+					$("#"+flexBox.getId())[0].children[0].classList.add("fullWidthTextField");
+				}
+			});
+			return new sap.m.CustomListItem({
+				content: [flexBox],
+			});
+		});
+		var oAnswersLabel = new sap.m.Label({
+			text : "Answers",
+			labelFor : oAnswerList
+		});
+		oForm.addContent(oAnswersLabel);
+		oForm.addContent(oAnswerList);
+
+		return oForm;
 	},
 
 	createNextButton: function(currentCounter, numberOfQuestions){

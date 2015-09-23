@@ -44,7 +44,7 @@ module.exports = {
 	getSurveyAnalysisList : function(res, req, log){
 		var dbutils = require("./dbutils.js");
 		var params = [req.query.id];
-		var sql = "SELECT * FROM view_survey_with_count WHERE sid = $1";
+		var sql = "SELECT * FROM view_survey_for_analysis WHERE sid = $1";
 		log.info("requesting SurveyAnalysis with id "+req.query.id);
 		var that = this;
 		var callback = function(result, error){
