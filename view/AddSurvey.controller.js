@@ -18,6 +18,9 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			if(data.isNew){
 				this.clearModel();
 			}
+			if(data.copyOfSurvey){
+				this.getView().getModel("info").setProperty("/copyOfSurvey", true);
+			}
 			if(data.surveyId){
 				this.getView().getModel("info").setProperty("/update", true);
 				this.loadData(data.surveyId);
@@ -51,15 +54,6 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 				}
 			});
 			footerArrayLeft.push(oBtnPrevious);
-			var oBtnNext = new sap.m.Button({
-				icon : "sap-icon://arrow-right",
-				tooltip : "next page",
-				visible: currentCounter < numberOfQuestions-1,
-				press : function(ev) {
-					oController.getView().nextView();
-				}
-			});
-			footerArrayRight.push(oBtnNext);
 			var oBtnClearQuestion = new sap.m.Button({
 				icon : "sap-icon://sys-cancel-2",
 				visible : currentCounter>=0,
@@ -80,7 +74,6 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			footerArrayRight.push(oBtnDelete);
 			var oBtnNew = new sap.m.Button({
 				icon : "sap-icon://save",
-				visible : quicksurvey.app.config.LaunchpadMode,
 				tooltip : "Save",
 				press : function(ev) {
 					if(oController.getView().getModel("info").getProperty("/update")){
@@ -91,6 +84,15 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 				}
 			});
 			footerArrayRight.push(oBtnNew);
+			var oBtnNext = new sap.m.Button({
+				icon : "sap-icon://arrow-right",
+				tooltip : "next page",
+				enabled: currentCounter < numberOfQuestions-1,
+				press : function(ev) {
+					oController.getView().nextView();
+				}
+			});
+			footerArrayRight.push(oBtnNext);
 			var oLblCount = new sap.m.Label({
 				text : (currentCounter+1) + " of " + numberOfQuestions,
 				visible : currentCounter>=0
@@ -110,8 +112,12 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 		var that= this;
 		console.log("load data...");
 
+		var url = "./survey";
+		if(this.getView().getModel("info").getProperty("/copyOfSurvey")){
+			url = "./copyOfSurvey";
+		}
 		$.ajax({
-			url: './survey',
+			url: url,
 			type: 'get',
 			//	contentType: "application/json; charset=utf-8",
 			success: function (data) {

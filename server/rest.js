@@ -41,6 +41,33 @@ module.exports = {
 		dbutils.executeSelectSQL(sql, params, log, callback);
 	},
 
+	getCopyOfSurvey : function(req, res, log){
+		var dbutils = require("./dbutils.js");
+		var params = [req.query.id];
+		var sql = "SELECT * FROM view_full_surveys WHERE sid = $1";
+		log.info("requesting Survey with id "+req.query.id);
+		var that = this;
+		var callback = function(result, error){
+			if(error){
+				write500(res);
+			} else {
+				var toSend = dbutils.extractFullSurveyList(result, log);
+				var survey = toSend.Survey[0];
+				survey.objectId=undefined;
+				survey.startedat=undefined;
+				survey.finishat=undefined;
+				for(var i = 0; i < survey.questions.length; i++){
+					survey.questions[i].objectId=undefined;
+					for(var j = 0; j < survey.questions[i].answers.length; j++){
+						survey.questions[i].answers[j].objectId=undefined;
+					}
+				}
+				that.write200(res, toSend);
+			}
+		}
+		dbutils.executeSelectSQL(sql, params, log, callback);
+	},
+
 	getSurveyAnalysisList : function(res, req, log){
 		var dbutils = require("./dbutils.js");
 		var params = [req.query.id];

@@ -40,6 +40,15 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
             justifyContent: sap.m.FlexJustifyContent.End,
             items: [
               new sap.m.Button({
+                icon : "sap-icon://duplicate",
+                press: function(oEvent){
+                  var context = oEvent.getSource().getBindingContext();
+                  var surveyId = context.getProperty("objectId");
+                  var object = {id : "AddSurvey", surveyId: surveyId, isNew: true, copyOfSurvey: true};
+                  sap.ui.getCore().getEventBus().publish("nav", "to", object);
+                },
+              }),
+              new sap.m.Button({
                 icon : "sap-icon://bar-code",
                 press: function(oEvent){
                   var context = oEvent.getSource().getBindingContext();
@@ -61,7 +70,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
                   var dialogDOM = $("#"+dialog.getId())[0];
                   var size = Math.min(dialogDOM.offsetHeight, dialogDOM.offsetWidth)-92;
                   new QRCode(flexBox.getId(), {
-                    text: "http://192.168.1.102:8877/QuickSurvey/perform.html?id="+surveyId,
+                    text: "http://192.168.1.103:8877/QuickSurvey/perform.html?id="+surveyId,
                     width: size,
                     height: size
                   });

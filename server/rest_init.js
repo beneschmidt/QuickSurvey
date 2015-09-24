@@ -16,6 +16,10 @@ module.exports = {
 			log.info("SurveyId: "+req.query.id)
 			rest.getSurvey(req, res, log);
 		});
+		app.get("/QuickSurvey/copyOfSurvey", function(req, res){
+			log.info("SurveyId: "+req.query.id)
+			rest.getCopyOfSurvey(req, res, log);
+		});
 		app.post("/QuickSurvey/addNewSurvey", function(req, res){
 			log.info("Adding a new survey...");
 			rest.addOrUpdateSurvey(res, req, req.body.survey, log);
