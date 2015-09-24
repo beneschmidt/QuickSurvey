@@ -30,7 +30,7 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
             visible: quicksurvey.app.config.LaunchpadMode,
             tooltip: "Back to Home",
             press: function (ev) {
-                sap.ui.getCore().getEventBus().publish("nav", "to", {id: "Launchpad"});
+                sap.ui.getCore().getEventBus().publish("nav", "to", {id: "SurveyList"});
             }
         });
         var page = new sap.m.Page({

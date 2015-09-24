@@ -151,10 +151,16 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 			var answer_id = selectedAnswer.getCustomData()[0].getProperty("value");
 			var currentArray =that.getModel("perform").getProperty("/performed_questions/"+that.getCurrentCounter()+"/performed_answers");
 			if(selected){
-				currentArray.push({
+				var newObj ={
 					answer_id: selectedAnswer.getCustomData()[0].getProperty("value"),
 					freetext:""
-				});
+				}
+
+				if(oControlEvent.getSource().getMode()==sap.m.ListMode.SingleSelectMaster){
+					currentArray[0]=newObj;
+				} else {
+					currentArray.push(newObj);
+				}
 			} else {
 				for(var i = 0; i < currentArray.length; i++){
 					if(currentArray[i].answer_id == answer_id){
