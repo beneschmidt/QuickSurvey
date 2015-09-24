@@ -132,9 +132,19 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 			var selectedItems = that.getModel("perform").getProperty("/performed_questions/"+currentCounter+"/performed_answers");
 			var item = new sap.m.StandardListItem({
 				title: value,
-				customData: [new sap.ui.core.CustomData({key:"objectId", value: oContext.getProperty("objectId")})],
-				selected: true
+				customData: [new sap.ui.core.CustomData({key:"objectId", value: oContext.getProperty("objectId")})]
 			});
+			item.addDelegate({
+				onAfterRendering: function(){
+					// this needs to be done to make sure that on a return to an already answered question the correct answer is selected
+					var performedAnswers = that.getModel("perform").getProperty("/performed_questions/"+currentCounter+"/performed_answers");
+					for(var i = 0; i < performedAnswers.length; i++){
+						if(performedAnswers[i].answer_id == this.getCustomData()[0].getProperty("value")){
+							this.setSelected(true);
+						}
+					}
+				}
+			}, item);
 			return item;
 		});
 		oAnswerList.bindProperty("mode", "survey>/questions/"+currentCounter+"/multiple", function(multiple) {
