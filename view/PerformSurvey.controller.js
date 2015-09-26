@@ -168,7 +168,8 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			var perform = {
 				survey_id   : model.getProperty("/surveyId"),
 				performed_at : 0,
-				performed_questions: []
+				performed_questions: [],
+				fingerprint: sap.ui.getCore().getModel("fingerprint").getProperty("/fingerprint")
 			};
 			for(var i = 0; i < model.getProperty("/questions").length; i++){
 				var question = {

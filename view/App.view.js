@@ -6,6 +6,7 @@ sap.ui.jsview("quicksurvey.view.App", {
     return "quicksurvey.view.App";
   },
 
+
   createContent: function(oController) {
 
       if(jQuery.sap.getUriParameters().get("mode") === "LeftMenuNavi"){

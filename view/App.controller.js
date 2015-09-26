@@ -2,11 +2,11 @@ jQuery.sap.require("jquery.sap.history");
 jQuery.sap.require("sap.m.InstanceManager");
 
 sap.ui.controller("quicksurvey.view.App", {
-	
+
 	getDefaultPage : function () {
 		return "Menu";
 	},
-	
+
 	onInit : function () {
 		var historyDefaultHandler = function (navType) {
 			if (navType === jQuery.sap.history.NavType.Back) {
@@ -15,7 +15,20 @@ sap.ui.controller("quicksurvey.view.App", {
 				this.navTo(this.getDefaultPage(), null, false);
 			}
 		};
-		
+
+
+		var that = this;
+		new Fingerprint2().get(function(result){
+			// this will use all available fingerprinting sources
+			var fingerprint = {
+				fingerprint: result
+			};
+			console.log("new fingerprint: "+fingerprint);
+
+			var model = new sap.ui.model.json.JSONModel(fingerprint);
+			sap.ui.getCore().setModel(model, "fingerprint");
+		});
+
 		var historyPageHandler = function (params, navType) {
 			if (!params || !params.id) {
 				jQuery.sap.log.error("invalid parameter: " + params);
@@ -27,7 +40,7 @@ sap.ui.controller("quicksurvey.view.App", {
 				}
 			}
 		};
-		
+
 		jQuery.sap.history({
 			routes: [{
 				// This handler is executed when you navigate back to the history state on the path "page"
@@ -37,15 +50,15 @@ sap.ui.controller("quicksurvey.view.App", {
 			// The default handler is executed when you navigate back to the history state with an empty hash
 			defaultHandler: jQuery.proxy(historyDefaultHandler, this)
 		});
-		
+
 		// subscribe to event bus
 		var bus = sap.ui.getCore().getEventBus();
 		bus.subscribe("nav", "to", this.navHandler, this);
 		bus.subscribe("nav", "backToPage", this.navHandler, this);
 		bus.subscribe("nav", "back", this.navHandler, this);
-		bus.subscribe("nav", "virtual", this.navHandler, this);		
+		bus.subscribe("nav", "virtual", this.navHandler, this);
 	},
-	
+
 	navHandler: function (channelId, eventId, data) {
 		var app = this.getView().app;
 		if (eventId === "to") {
@@ -56,7 +69,7 @@ sap.ui.controller("quicksurvey.view.App", {
 			if(data && data.id){
 				this.navBack(data.id);
 			} else {
-				jQuery.sap.history.back();				
+				jQuery.sap.history.back();
 			}
 		} else if (eventId === "virtual") {
 			jQuery.sap.history.addVirtualHistory();
@@ -64,43 +77,42 @@ sap.ui.controller("quicksurvey.view.App", {
 			jQuery.sap.log.error("'nav' event cannot be processed. There's no handler registered for event with id: " + eventId);
 		}
 	},
-	
+
 	navTo : function (id, data, writeHistory) {
-		
+
 		if (id === undefined) {
-			
+
 			// invalid parameter
 			jQuery.sap.log.error("navTo failed due to missing id");
-		
-		} else {
 
+		} else {
 			var app = this.getView().app;
 			// navigate in the app control
 			app.to(id, "slide", data);
-			
+
 		}
 	},
-	
+
 	navBack : function (id) {
-		
+
 		if (!id) {
-			
+
 			// invalid parameter
 			jQuery.sap.log.error("navBack - parameters id must be given");
-		
+
 		} else {
-			
+
 			// close open popovers
 			if (sap.m.InstanceManager.hasOpenPopover()) {
 				sap.m.InstanceManager.closeAllPopovers();
 			}
-			
+
 			// close open dialogs
 			if (sap.m.InstanceManager.hasOpenDialog()) {
 				sap.m.InstanceManager.closeAllDialogs();
 				jQuery.sap.log.info("navBack - closed dialog(s)");
 			}
-			
+
 			// ... and navigate back
 			var app = this.getView().app;
 			var currentId = (app.getCurrentPage()) ? app.getCurrentPage().getId() : null;
@@ -109,5 +121,5 @@ sap.ui.controller("quicksurvey.view.App", {
 				jQuery.sap.log.info("navBack - back to page: " + id);
 			}
 		}
-	}	
+	}
 });
