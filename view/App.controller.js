@@ -16,19 +16,6 @@ sap.ui.controller("quicksurvey.view.App", {
 			}
 		};
 
-
-		var that = this;
-		new Fingerprint2().get(function(result){
-			// this will use all available fingerprinting sources
-			var fingerprint = {
-				fingerprint: result
-			};
-			console.log("new fingerprint: "+fingerprint);
-
-			var model = new sap.ui.model.json.JSONModel(fingerprint);
-			sap.ui.getCore().setModel(model, "fingerprint");
-		});
-
 		var historyPageHandler = function (params, navType) {
 			if (!params || !params.id) {
 				jQuery.sap.log.error("invalid parameter: " + params);

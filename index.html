@@ -46,34 +46,19 @@ jQuery.sap.require("sap.m.routing.RouteMatchedHandler");  // load RouteMatchedHa
 sap.ui.getCore().attachInit(function() {
   sap.ui.jsview("RootView", "quicksurvey.view.App").placeAt('root');
 
-  var oRouter = new sap.ui.core.routing.Router(
-    [{
-      name: "test",
-      pattern: "test"
-    }],{
-      targetControl: "splitapp",      // targetControl refers to the id of control where all the target views are to be placed
-      // this is defined in 'MainView' createcontent method
-      targetAggregation: "detailPages", // targetAggregation refers to aggregation namw of targetControl. For splitApp
-      // control there are two Aggregations, 'detailPages' and 'masterPages'
-      viewType: "JS",   // viewType defines type of the target views
-      viewPath: "quicksurvey.view",  // The view path parameter specifies a prefix that prepends the target views. In our case
-      // target view detail.Categories will be takes as Views.detail.Categories. Please note that
-      // view Categories is placed under folder Views/detail/
-      clearTarget: true  //The clear target parameter defines a boolean that is used to specify if the aggregation
-      //should be cleared before adding the view to it.
-    });
-    oRouter.register("router");
-    oRouter.initialize();  // Initialise the Router
-    oRouter.getRoute("test").attachPatternMatched(function() {
-      console.log("I'm in");
-      sap.ui.getCore().getEventBus().publish("nav", "to", {id : "PerformSurvey"});
-    });
+  var that = this;
+  new Fingerprint2().get(function(result){
+    // this will use all available fingerprinting sources
+    var fingerprint = {
+      fingerprint: result
+    };
+    console.log("new fingerprint: "+fingerprint);
+
+    var model = new sap.ui.model.json.JSONModel(fingerprint);
+    sap.ui.getCore().setModel(model, "fingerprint");
   });
-
-
-
-
-  </script>
+});
+</script>
 </head>
 
 <body class="sapUiBody" id="root">
