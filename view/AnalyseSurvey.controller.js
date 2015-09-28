@@ -40,7 +40,7 @@ sap.ui.controller("quicksurvey.view.AnalyseSurvey", {
 			var numberOfQuestions = this.getView().getModel("survey").getProperty("/questions").length;
 			var oBtnPrevious = new sap.m.Button({
 				icon : "sap-icon://arrow-left",
-				tooltip : "previous page",
+				tooltip : "{i18n>PREVIOUS_PAGE}",
 				visible : currentCounter>0,
 				press : function(ev) {
 					oController.getView().previousView();
@@ -49,7 +49,7 @@ sap.ui.controller("quicksurvey.view.AnalyseSurvey", {
 			footerArrayLeft.push(oBtnPrevious);
 			var oBtnNext = new sap.m.Button({
 				icon : "sap-icon://arrow-right",
-				tooltip : "next page",
+				tooltip : "{i18n>NEXT_PAGE}",
 				visible: currentCounter < numberOfQuestions-1,
 				press : function(ev) {
 					oController.getView().nextView();
@@ -57,7 +57,7 @@ sap.ui.controller("quicksurvey.view.AnalyseSurvey", {
 			});
 			footerArrayRight.push(oBtnNext);
 			var oLblCount = new sap.m.Label({
-				text : (currentCounter+1) + " of " + numberOfQuestions,
+				text : (currentCounter+1) + " {i18n>I18N_OF} " + numberOfQuestions,
 				visible : currentCounter>=0
 			});
 			footerArrayMiddle.push(oLblCount);
@@ -131,7 +131,7 @@ sap.ui.controller("quicksurvey.view.AnalyseSurvey", {
 		var info = {
 			counter: 0,
 			alreadyFinished: false,
-		}
+		};
 
 		var infoModel = new sap.ui.model.json.JSONModel(info);
 		this.getView().setModel(infoModel, "info");
@@ -139,6 +139,6 @@ sap.ui.controller("quicksurvey.view.AnalyseSurvey", {
 
 	doNavBack: function(event) {
 		this.bus.publish("nav", "back");
-	},
+	}
 
 });

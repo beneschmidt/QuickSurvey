@@ -29,7 +29,7 @@ sap.ui.jsview("quicksurvey.view.AnalyseSurvey", {
     var oBtnLaunchpad = new sap.m.Button({
       icon: "sap-icon://home",
       visible: quicksurvey.app.config.LaunchpadMode,
-      tooltip: "Back to Home",
+      tooltip: "{i18n>BACK_TO_HOME}",
       press: function (ev) {
         sap.ui.getCore().getEventBus().publish("nav", "to", {id: "SurveyList"});
       }
@@ -269,7 +269,7 @@ createFreeTextForm: function () {
   var that = this;
   var oForm = new sap.ui.layout.form.SimpleForm({
     editable: false,
-    layout: "ResponsiveGridLayout",
+    layout: "ResponsiveGridLayout"
   });
 
   var oQuestionText = new sap.m.Text({
@@ -302,11 +302,11 @@ createFreeTextForm: function () {
       }
     });
     return new sap.m.CustomListItem({
-      content: [flexBox],
+      content: [flexBox]
     });
   });
   var oAnswersLabel = new sap.m.Label({
-    text: "Answers",
+    text: "{i18n>ANSWERS}",
     labelFor: oAnswerList
   });
   oForm.addContent(oAnswersLabel);
@@ -318,7 +318,7 @@ createFreeTextForm: function () {
 createNextButton: function (currentCounter, numberOfQuestions) {
   var oBtnNext = new sap.m.Button({
     icon: "sap-icon://arrow-right",
-    tooltip: "next page",
+    tooltip: "{i18n>NEXT_PAGE}",
     press: function (ev) {
       oController.getView().nextView();
     }
@@ -333,7 +333,7 @@ createNextButton: function (currentCounter, numberOfQuestions) {
 createThanksForm: function () {
   var oForm = new sap.ui.layout.form.SimpleForm({
     editable: false,
-    layout: "ResponsiveGridLayout",
+    layout: "ResponsiveGridLayout"
   });
   this.getModel("info").setProperty("/title", "Thanks");
   //oForm.addContent(oTitleLabel);
@@ -341,13 +341,13 @@ createThanksForm: function () {
   var that = this;
 
   var oThanksText = new sap.m.Title({
-    text: "Thank you for participating",
+    text: "{i18n>THANK_YOU}",
     textAlign: sap.ui.core.TextAlign.Center,
     titleStyle: sap.ui.core.TitleLevel.H2
   });
 
   var oFinishedText = new sap.m.Title({
-    text: "Unfortunately it was already finished",
+    text: "{i18n>ALLREADY_FINISHED}",
     textAlign: sap.ui.core.TextAlign.Center,
     visible: {
       path: "info>/alreadyFinished"
@@ -356,7 +356,7 @@ createThanksForm: function () {
 
   var oImage = new sap.m.Image({
     src: 'img/Smiley_Face.png'
-  })
+  });
   var oButtonContainer = new sap.m.FlexBox({
     justifyContent: sap.m.FlexJustifyContent.Center,
     alignItems: sap.m.FlexAlignItems.Center,
@@ -376,7 +376,7 @@ createThanksForm: function () {
 createNotPossibleForm: function (title, text) {
   var oForm = new sap.ui.layout.form.SimpleForm({
     editable: false,
-    layout: "ResponsiveGridLayout",
+    layout: "ResponsiveGridLayout"
   });
   this.getModel("info").setProperty("/title", title);
   //oForm.addContent(oTitleLabel);
@@ -391,7 +391,7 @@ createNotPossibleForm: function (title, text) {
 
   var oImage = new sap.m.Image({
     src: 'img/Smiley_Face.png'
-  })
+  });
   var oButtonContainer = new sap.m.FlexBox({
     justifyContent: sap.m.FlexJustifyContent.Center,
     alignItems: sap.m.FlexAlignItems.Center,
@@ -406,6 +406,6 @@ createNotPossibleForm: function (title, text) {
   oForm.addContent(oButtonContainer);
 
   return oForm;
-},
+}
 
 });
