@@ -29,21 +29,21 @@ sap.ui.jsview("quicksurvey.view.StartSurvey", {
 		var oBtnLaunchpad = new sap.m.Button({
 			icon : "sap-icon://home",
 			visible : quicksurvey.app.config.LaunchpadMode,
-			tooltip : "Back to Survey List",
+			tooltip : "{i18n>BACK_TO_SURVEY_LIST}",
 			press : function(ev) {
 				sap.ui.getCore().getEventBus().publish("nav", "to", {id : "SurveyList"});
 			}
 		});
 		var oBtnNew = new sap.m.Button({
 			icon : "sap-icon://begin",
-			tooltip : "Start",
+			tooltip : "{i18n>START}",
 			press : function(ev) {
 				oController.startSurvey();
 			}
 		});
 		var form = this.createStartSurveyForm();
 		var page =  new sap.m.Page({
-			title : "Start a Survey",
+			title : "{i18n>START_SURVEY}",
 			showNavButton: "{device>/isPhone}",
 			headerContent:[oBtnLaunchpad],
 			content: [form],
@@ -89,7 +89,7 @@ sap.ui.jsview("quicksurvey.view.StartSurvey", {
 				return autostop?"Yes":"No";
 		});
 		var oAutostopToggleLabel = new sap.m.Label({
-			text : "Autostop",
+			text : "{i18n>AUTOSTOP}",
 			labelFor : oAutostopToggle
 		});
 
@@ -107,13 +107,13 @@ sap.ui.jsview("quicksurvey.view.StartSurvey", {
 		});
 
 		var oMinutesLabel = new sap.m.Label({
-			text : "Minutes",
+			text : "{i18n>MINUTES}",
 			labelFor : oMinutes
 		});
 		oForm.addContent(oMinutesLabel);
 		oForm.addContent(oMinutes);
 
 		return oForm;
-	},
+	}
 
 });

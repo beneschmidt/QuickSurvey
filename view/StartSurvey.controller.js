@@ -69,6 +69,5 @@ sap.ui.controller("quicksurvey.view.StartSurvey", {
 			},
 			data: { survey: survey }
 		});
-	},
-
+	}
 });
