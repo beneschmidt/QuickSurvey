@@ -41,7 +41,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			var canGoBack = this.getView().getModel("survey").getProperty("/answersChangable")? currentCounter > 0 && currentCounter <= numberOfQuestions-1: false;
 			var oBtnPrevious = new sap.m.Button({
 				icon : "sap-icon://arrow-left",
-				tooltip : "previous page",
+				tooltip : "{i18n>PREVIOUS_PAGE}",
 				visible : canGoBack,
 				press : function(ev) {
 					oController.getView().previousView();
@@ -50,7 +50,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			footerArrayLeft.push(oBtnPrevious);
 			var oBtnHome = new sap.m.Button({
 				icon : "sap-icon://home",
-				tooltip : "home",
+				tooltip : "{i18n>BACK_TO_HOME}",
 				visible: currentCounter === numberOfQuestions,
 				press : function(ev) {
 					sap.ui.getCore().getEventBus().publish("nav", "to", {
@@ -62,7 +62,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			// show next button only if something was selected
 			var oBtnNext = new sap.m.Button({
 				icon : "sap-icon://arrow-right",
-				tooltip : "next page",
+				tooltip : "{i18n>NEXT_PAGE}",
 				visible: currentCounter < numberOfQuestions-1,
 				press : function(ev) {
 					var answers = oController.getView().getModel("perform").getProperty("/performed_questions/"+currentCounter+"/performed_answers");
@@ -78,7 +78,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			var oBtnNew = new sap.m.Button({
 				icon : "sap-icon://save",
 				visible : currentCounter === numberOfQuestions-1,
-				tooltip : "Save",
+				tooltip : "{i18n>SAVE}",
 				press : function(ev) {
 					var answers = oController.getView().getModel("perform").getProperty("/performed_questions/"+currentCounter+"/performed_answers");
 					var hasAlreadySelectedSomething = answers? answers.length>0:false;
@@ -91,7 +91,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			});
 			footerArrayRight.push(oBtnNew);
 			var oLblCount = new sap.m.Label({
-				text : (currentCounter+1) + " of " + numberOfQuestions,
+				text : (currentCounter+1) + " {i18n>I18N_OF} " + numberOfQuestions,
 			});
 			footerArrayMiddle.push(oLblCount);
 			var bar = new sap.m.Bar({
@@ -106,14 +106,14 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 
 	openNothingSelectedDialog : function(){
 		var dialog = new sap.m.Dialog({
-			title: "nothing selected",
+			title: "{i18n>NOTHING_SELECTED}",
 			type: sap.m.DialogType.Message,
 			state: sap.ui.core.ValueState.Warning,
 			content: [new sap.m.Text({
-				text: "Please select an answer before sending the survey. Thanks",
+				text: "{i18n>PLEASE_SELECT_ANSWER}",
 				textAlign: sap.ui.core.TextAlign.Center
 			})]
-		})
+		});
 		var button = new sap.m.Button({
 			text: "OK",
 			press: function(oControlEvent){
@@ -208,7 +208,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 		var info = {
 			counter: 0,
 			alreadyFinished: false,
-		}
+		};
 
 		var infoModel = new sap.ui.model.json.JSONModel(info);
 		this.getView().setModel(infoModel, "info");
@@ -250,6 +250,6 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			},
 			data: { survey: survey }
 		});
-	},
+	}
 
 });

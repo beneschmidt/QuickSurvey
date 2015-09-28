@@ -28,7 +28,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		var oBtnLaunchpad = new sap.m.Button({
 			icon : "sap-icon://home",
 			visible : quicksurvey.app.config.LaunchpadMode,
-			tooltip : "Back to Home",
+			tooltip : "{i18n>BACK_TO_HOME}",
 			press : function(ev) {
 				sap.ui.getCore().getEventBus().publish("nav", "to", {id : "Launchpad"});
 			}
@@ -118,14 +118,14 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		});
 		oQuestionText.addStyleClass("questionTitle");
 		var oQuestionTextLabel = new sap.m.Label({
-			text : "Question text",
+			text : "{i18n>QUESTION_TEXT}",
 			labelFor : oQuestionText
 		});
 		//oForm.addContent(oQuestionTextLabel);
 		oForm.addContent(oQuestionText);
 
 		var oAnswerList = new sap.m.List({
-			includeItemInSelection: true,
+			includeItemInSelection: true
 		});
 		oAnswerList.bindAggregation("items", "survey>/questions/"+currentCounter+"/answers", function(sId, oContext) {
 			var value = oContext.getProperty("answertext");
@@ -164,7 +164,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 				var newObj ={
 					answer_id: selectedAnswer.getCustomData()[0].getProperty("value"),
 					freetext:""
-				}
+				};
 
 				if(oControlEvent.getSource().getMode()==sap.m.ListMode.SingleSelectMaster){
 					currentArray[0]=newObj;
@@ -182,7 +182,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 			var array = that.getModel("perform").setProperty("/performed_questions/"+that.getCurrentCounter()+"/performed_answers", currentArray);
 		});
 		var oAnswersLabel = new sap.m.Label({
-			text : "Answers",
+			text : "{i18n>ANSWERS}",
 			labelFor : oAnswerList
 		});
 		oForm.addContent(oAnswersLabel);
@@ -214,7 +214,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 			}
 		});
 		var oAnswerLabel = new sap.m.Label({
-			text : "Free text answer",
+			text : "{i18n>FREE_TEXT_ANSWER}",
 			labelFor : oAnswer
 		});
 		oForm.addContent(oAnswerLabel);
@@ -226,7 +226,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 	createNextButton: function(currentCounter, numberOfQuestions){
 		var oBtnNext = new sap.m.Button({
 			icon : "sap-icon://arrow-right",
-			tooltip : "next page",
+			tooltip : "{i18n>NEXT_PAGE}",
 			press : function(ev) {
 				oController.getView().nextView();
 			}
@@ -241,7 +241,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 	createThanksForm: function(){
 		var oForm = new sap.ui.layout.form.SimpleForm({
 			editable        : false,
-			layout          : "ResponsiveGridLayout",
+			layout          : "ResponsiveGridLayout"
 		});
 		this.getModel("info").setProperty("/title", "Thanks");
 		//oForm.addContent(oTitleLabel);
@@ -249,13 +249,13 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		var that = this;
 
 		var oThanksText = new sap.m.Title({
-			text: "Thank you for participating",
+			text: "{i18n>THANK_YOU}",
 			textAlign: sap.ui.core.TextAlign.Center,
 			titleStyle: sap.ui.core.TitleLevel.H2
 		});
 
 		var oFinishedText = new sap.m.Title({
-			text: "Unfortunately it was already finished",
+			text: "{i18n>ALLREADY_FINISHED}",
 			textAlign: sap.ui.core.TextAlign.Center,
 			visible: {
 				path:"info>/alreadyFinished"
@@ -264,7 +264,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 
 		var oImage = new sap.m.Image({
 			src: 'img/Smiley_Face.png'
-		})
+		});
 		var oButtonContainer = new sap.m.FlexBox({
 			justifyContent: sap.m.FlexJustifyContent.Center,
 			alignItems: sap.m.FlexAlignItems.Center,
@@ -284,7 +284,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 	createNotPossibleForm: function(title, text){
 		var oForm = new sap.ui.layout.form.SimpleForm({
 			editable        : false,
-			layout          : "ResponsiveGridLayout",
+			layout          : "ResponsiveGridLayout"
 		});
 		this.getModel("info").setProperty("/title", title);
 		//oForm.addContent(oTitleLabel);
@@ -295,7 +295,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 			text: text,
 			textAlign: sap.ui.core.TextAlign.Center
 		});
-		oText.addStyleClass("questionTitle")
+		oText.addStyleClass("questionTitle");
 
 		var oImage = new sap.m.Image({
 			src: 'img/Smiley_Face.png'
