@@ -27,13 +27,13 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		var oBtnLaunchpad = new sap.m.Button({
 			icon : "sap-icon://home",
 			visible : quicksurvey.app.config.LaunchpadMode,
-			tooltip : "Back to Survey List",
+			tooltip : "{i18n>BACK_TO_SURVEY_LIST}",
 			press : function(ev) {
 				sap.ui.getCore().getEventBus().publish("nav", "to", {id : "SurveyList"});
 			}
 		});
 		var page =  new sap.m.Page({
-			title : "Add Survey",
+			title : "{i18n>ADD_SURVEY}",
 			showNavButton: "{device>/isPhone}",
 			headerContent:[oBtnLaunchpad],
 			navButtonPress: [oController.doNavBack, oController]
@@ -124,7 +124,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			}
 		});
 		var oTitleLabel = new sap.m.Label({
-			text : "Survey Title",
+			text : "{i18n>SURVEY_TITLE}",
 			labelFor : oTitle
 		});
 		oForm.addContent(oTitleLabel);
@@ -152,7 +152,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			}
 		});
 		var oChangeAnswersLabel = new sap.m.Label({
-			text : "Answers changable",
+			text : "{i18n>ANSWERS_CHANGABLE}",
 			labelFor : oChangeAnswers
 		});
 		oForm.addContent(oChangeAnswersLabel);
@@ -175,7 +175,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		});
 
 		var oQuestionTextLabel = new sap.m.Label({
-			text : "Question text",
+			text : "{i18n>QUESTION_TEXT}",
 			labelFor : oQuestionText
 		});
 		oForm.addContent(oQuestionTextLabel);
@@ -227,7 +227,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			});
 		});
 		var oAnswersLabel = new sap.m.Label({
-			text : multiple?"Answers (multiple)": "Answers",
+			text : multiple?"{i18n>MULTIPLE_ANSWERS}": "{i18n>ANSWERS}",
 			labelFor : oAnswerList
 		});
 		oForm.addContent(oAnswersLabel);
@@ -239,7 +239,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 	createQuestionForm: function(title){
 		var oForm = this.createForm();
 		var oTitleLabel = new sap.m.Label({
-			text : title,
+			text : title
 		});
 		oForm.addContent(oTitleLabel);
 		var currentCounter = this.getCurrentCounter();
@@ -250,7 +250,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		});
 
 		var oQuestionTextLabel = new sap.m.Label({
-			text : "Question text",
+			text : "{i18n>QUESTION_TEXT}",
 			labelFor : oQuestionText
 		});
 		oForm.addContent(oQuestionTextLabel);
@@ -264,7 +264,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			});
 		});
 		var oAnswersLabel = new sap.m.Label({
-			text : "Answers",
+			text : "{i18n>ANSWERS}",
 			labelFor : oAnswerList
 		});
 		oForm.addContent(oAnswersLabel);
@@ -276,7 +276,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 	createFreeTextForm: function(){
 		var oForm = this.createForm();
 		var oTitleLabel = new sap.m.Label({
-			text : "Free Text",
+			text : "{i18n>FREE_TEXT}"
 		});
 		oForm.addContent(oTitleLabel);
 		var currentCounter = this.getCurrentCounter();
@@ -287,7 +287,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		});
 
 		var oQuestionTextLabel = new sap.m.Label({
-			text : "Question text",
+			text : "{i18n>QUESTION_TEXT}",
 			labelFor : oQuestionText
 		});
 		oForm.addContent(oQuestionTextLabel);
@@ -302,7 +302,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			}
 		});
 		var oAnswerLabel = new sap.m.Label({
-			text : "Free text answer",
+			text : "{i18n>FREE_TEXT_ANSWER}",
 			labelFor : oAnswer
 		});
 		oForm.addContent(oAnswerLabel);
@@ -315,41 +315,41 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		var that = this;
 		// add new question dialog
 		var listItemYesNo = new sap.m.StandardListItem({
-			title: "Yes/No",
+			title: "{i18n>YES_NO}",
 			customData:[new sap.ui.core.CustomData({key: "type", value: 1}),
 			new sap.ui.core.CustomData({key: "multiple", value: false}),
 			new sap.ui.core.CustomData({key: "items", value: [{answertext:"Yes"}, {answertext:"No"}]})]
 		});
 		var listItemGrades = new sap.m.StandardListItem({
-			title: "Grades (1-5)",
+			title: "{i18n>GRADES}",
 			customData:[new sap.ui.core.CustomData({key: "type", value: 2}),
 			new sap.ui.core.CustomData({key: "multiple", value: false}),
 			new sap.ui.core.CustomData({key: "items", value: [{answertext: "1"},{answertext:"2"},{answertext:"3"},{answertext:"4"},{answertext:"5"}]})]
 			//new sap.ui.core.CustomData({key: "items", value: [{test: "0",answertext: "one"},{test: "1",answertext:"two"}]})]
 		});
 		var listItemSingleSelection = new sap.m.StandardListItem({
-			title: "Single selection",
+			title: "{i18n>SINGLE_SELECTION}",
 			customData:[new sap.ui.core.CustomData({key: "type", value: 3}),
 			new sap.ui.core.CustomData({key: "multiple", value: false}),
 			new sap.ui.core.CustomData({key: "items", value: [{answertext: ""},{answertext:""}]})]
 			//new sap.ui.core.CustomData({key: "items", value: [{test: "0",answertext: "one"},{test: "1",answertext:"two"}]})]
 		});
 		var listItemMultipleSelection = new sap.m.StandardListItem({
-			title: "Multiple selection",
+			title: "{i18n>MULTIPLE_SELECTION}",
 			customData:[new sap.ui.core.CustomData({key: "type", value: 4}),
 			new sap.ui.core.CustomData({key: "multiple", value: true}),
 			new sap.ui.core.CustomData({key: "items", value: [{answertext: ""},{answertext:""}]})]
 			//new sap.ui.core.CustomData({key: "items", value: [{test: "0",answertext: "one"},{test: "1",answertext:"two"}]})]
 		});
 		var listItemFreeText = new sap.m.StandardListItem({
-			title: "Free text",
+			title: "{i18n>FREE_TEXT}",
 			customData:[new sap.ui.core.CustomData({key: "type", value: 5}),
 			new sap.ui.core.CustomData({key: "multiple", value: false}),
 			new sap.ui.core.CustomData({key: "items", value: [{answertext: "free text"}]})]
 			//new sap.ui.core.CustomData({key: "items", value: [{test: "0",answertext: "one"},{test: "1",answertext:"two"}]})]
 		});
 		var oSelectDialog = new sap.m.SelectDialog({
-			title: "Add new Question",
+			title: "{i18n>ADD_NEW_QUESTION}",
 			noDataText: "Nothing possible",
 			items : [listItemYesNo, listItemGrades, listItemSingleSelection, listItemMultipleSelection, listItemFreeText],
 			confirm: function(evt){
@@ -363,7 +363,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 					questiontext: "",
 					multiple: multiple,
 					answers: items
-				}
+				};
 				var arr = that.getModel("survey").getProperty("/questions");
 				arr.splice(nextCounter, 0 , question);
 				that.getModel("survey").setProperty("/questions", arr);
@@ -372,13 +372,13 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		});
 
 		var oSelectDialogLabel = new sap.m.Label({
-			text : "Add new Question",
+			text : "{i18n>ADD_NEW_QUESTION}",
 			labelFor : oSelectDialog
 		});
 		var oSelectDialogBtn = new sap.m.Button({
 			icon : "sap-icon://add",
 			visible : quicksurvey.app.config.LaunchpadMode,
-			tooltip : "Create new Question",
+			tooltip : "{i18n>CREATE_NEW_QUESTION}",
 			press : function(ev) {
 				oSelectDialog.open();
 			}
@@ -387,8 +387,8 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		var object = {
 			button: oSelectDialogBtn,
 			label: oSelectDialogLabel
-		}
+		};
 		return object;
-	},
+	}
 
 });

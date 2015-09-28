@@ -47,7 +47,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			var numberOfQuestions = this.getView().getModel("survey").getProperty("/questions").length;
 			var oBtnPrevious = new sap.m.Button({
 				icon : "sap-icon://arrow-left",
-				tooltip : "previous page",
+				tooltip : "{i18n>PREVIOUS_PAGE}",
 				visible : currentCounter>=0,
 				press : function(ev) {
 					oController.getView().previousView();
@@ -57,7 +57,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			var oBtnClearQuestion = new sap.m.Button({
 				icon : "sap-icon://sys-cancel-2",
 				visible : currentCounter>=0,
-				tooltip : "Clear question",
+				tooltip : "{i18n>CLEAR_QUESTION}",
 				press : function(ev) {
 					oController.clearQuestion();
 				}
@@ -66,7 +66,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			var oBtnDelete = new sap.m.Button({
 				icon : "sap-icon://delete",
 				visible : oController.getView().getModel("info").getProperty("/update"),
-				tooltip : "Delete survey",
+				tooltip : "{i18n>DELETE_SURVEY}",
 				press : function(ev) {
 					oController.deleteSurvey();
 				}
@@ -74,7 +74,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			footerArrayRight.push(oBtnDelete);
 			var oBtnNew = new sap.m.Button({
 				icon : "sap-icon://save",
-				tooltip : "Save",
+				tooltip : "{i18n>SAVE}",
 				press : function(ev) {
 					if(oController.getView().getModel("info").getProperty("/update")){
 						oController.updateSurvey();
@@ -86,7 +86,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			footerArrayRight.push(oBtnNew);
 			var oBtnNext = new sap.m.Button({
 				icon : "sap-icon://arrow-right",
-				tooltip : "next page",
+				tooltip : "{i18n>NEXT_PAGE}",
 				enabled: currentCounter < numberOfQuestions-1,
 				press : function(ev) {
 					oController.getView().nextView();
@@ -94,7 +94,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 			});
 			footerArrayRight.push(oBtnNext);
 			var oLblCount = new sap.m.Label({
-				text : (currentCounter+1) + " of " + numberOfQuestions,
+				text : (currentCounter+1) + " {i18n>I18N_OF} " + numberOfQuestions,
 				visible : currentCounter>=0
 			});
 			footerArrayMiddle.push(oLblCount);
@@ -174,7 +174,7 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 		var info = {
 			counter: -1,
 			update: false
-		}
+		};
 
 		var infoModel = new sap.ui.model.json.JSONModel(info);
 		sap.ui.getCore().setModel(infoModel, "info");
