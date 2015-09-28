@@ -33,7 +33,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
                   return "finished";
                 }
               }
-            },
+            }
           }),
           new sap.m.FlexBox({
             direction: sap.m.FlexDirection.Row,
@@ -46,7 +46,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
                   var surveyId = context.getProperty("objectId");
                   var object = {id : "AddSurvey", surveyId: surveyId, isNew: true, copyOfSurvey: true};
                   sap.ui.getCore().getEventBus().publish("nav", "to", object);
-                },
+                }
               }),
               new sap.m.Button({
                 icon : "sap-icon://bar-code",
@@ -78,7 +78,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
                   $("#"+flexBox.getId())[0].onclick=function(){
                     dialog.close();
                   }
-                },
+                }
               }),
               new sap.m.Button({
                 icon : "sap-icon://media-play",
@@ -97,7 +97,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
                   var surveyId = context.getProperty("objectId");
                   var object = {id : "StartSurvey", surveyId: surveyId, isNew: true};
                   sap.ui.getCore().getEventBus().publish("nav", "to", object);
-                },
+                }
               }),
               new sap.m.Button({
                 icon : "sap-icon://stop",
@@ -109,7 +109,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
                     } else {
                       return false;
                     }
-                  },
+                  }
                 },
                 press: function(oEvent){
                   var context = oEvent.getSource().getBindingContext();
@@ -156,7 +156,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
     var oBtnNew = new sap.m.Button({
       icon : "sap-icon://create",
       visible : quicksurvey.app.config.LaunchpadMode,
-      tooltip : "Create a new survey",
+      tooltip : "{i18n>CREATE_NEW_SURVEY}",
       press : function(ev) {
         sap.ui.getCore().getEventBus().publish("nav", "to", {
           id : "AddSurvey",
@@ -169,7 +169,7 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
     var oBtnLaunchpad = new sap.m.Button({
       icon : "sap-icon://home",
       visible : quicksurvey.app.config.LaunchpadMode,
-      tooltip : "Back to Launchpad",
+      tooltip : "{i18n>BACK_TO_HOME}",
       press : function(ev) {
         sap.ui.getCore().getEventBus().publish("nav", "back", {id : "Launchpad"});
       }

@@ -34,7 +34,7 @@ sap.ui.controller("quicksurvey.view.SurveyList", {
 		var that= this;
 		var survey = {
 			surveyId: surveyId
-		}
+		};
 
 		$.ajax({
 			url: './deleteSurvey',
@@ -64,7 +64,7 @@ sap.ui.controller("quicksurvey.view.SurveyList", {
 		var that= this;
 		var survey = {
 			surveyId: surveyId
-		}
+		};
 
 		$.ajax({
 			url: './stopSurvey',
@@ -88,6 +88,6 @@ sap.ui.controller("quicksurvey.view.SurveyList", {
 			},
 			data: { survey: survey }
 		});
-	},
+	}
 
 });
