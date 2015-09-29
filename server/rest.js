@@ -35,12 +35,13 @@ module.exports = {
 			} else {
 				var toSend = dbutils.extractFullSurveyList(result, log);
 				if(req.query.fingerprint){
-					var fingerprintQuery = "SELECT COUNT(*) AS fcount FROM performed_survey WHERE fingerprint = $1";
-					var fingerprintParams = [req.query.fingerprint];
+					var fingerprintQuery = "SELECT COUNT(*) AS fcount FROM performed_survey WHERE survey_id = $1 AND fingerprint = $2";
+					var fingerprintParams = [req.query.id, req.query.fingerprint];
 					var fingerprintCallback = function(result, error){
 						if(error){
 							that.write500(res);
 						} else {
+							log.info("alreadyPerformed? "+result[0].fcount);
 							toSend.alreadyPerformed = result[0].fcount>0;
 							that.write200(res, toSend);
 						}

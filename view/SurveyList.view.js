@@ -23,14 +23,14 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
               parts: [{path: "finishat"}],
               formatter: function(finishat){
                 if(finishat==-1){
-                  return "running";
+                  return sap.ui.getCore().getModel("i18n").getProperty("RUNNING");
                 } else if(finishat+0===0){
-                  return "not started yet"
+                  return  sap.ui.getCore().getModel("i18n").getProperty("NOT_STARTED");
                 } else if(finishat+0 && new Date().getTime() < finishat){
                   var date = new Date(finishat- new Date().getTime());
                   return date.getMinutes()+":"+date.getSeconds();
                 } else{
-                  return "finished";
+                  return  sap.ui.getCore().getModel("i18n").getProperty("FINISHED");
                 }
               }
             }

@@ -48,10 +48,14 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 				}
 			});
 			footerArrayLeft.push(oBtnPrevious);
+			var isRealViewToEdit = currentCounter === numberOfQuestions-1 && !oController.getView().getModel("info").getProperty("/alreadyFinished")
+			&&  !oController.getView().getModel("info").getProperty("/notStarted")
+			&&  !oController.getView().getModel("info").getProperty("/finished")
+			&&  !oController.getView().getModel("info").getProperty("/alreadyPerformed");
 			var oBtnHome = new sap.m.Button({
 				icon : "sap-icon://home",
 				tooltip : "{i18n>BACK_TO_HOME}",
-				visible: currentCounter === numberOfQuestions || oController.getView().getModel("info").getProperty("/alreadyFinished"),
+				visible: !isRealViewToEdit,
 				press : function(ev) {
 					sap.ui.getCore().getEventBus().publish("nav", "to", {
 						id : "Launchpad"
@@ -77,7 +81,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			footerArrayRight.push(oBtnNext);
 			var oBtnNew = new sap.m.Button({
 				icon : "sap-icon://save",
-				visible : currentCounter === numberOfQuestions-1 && !oController.getView().getModel("info").getProperty("/alreadyFinished"),
+				visible : isRealViewToEdit,
 				tooltip : "{i18n>SAVE}",
 				press : function(ev) {
 					var answers = oController.getView().getModel("perform").getProperty("/performed_questions/"+currentCounter+"/performed_answers");
@@ -92,6 +96,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			footerArrayRight.push(oBtnNew);
 			var oLblCount = new sap.m.Label({
 				text : (currentCounter+1) + " {i18n>I18N_OF} " + numberOfQuestions,
+				visible: isRealViewToEdit
 			});
 			footerArrayMiddle.push(oLblCount);
 			var bar = new sap.m.Bar({

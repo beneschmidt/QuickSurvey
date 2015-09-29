@@ -77,11 +77,11 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		// type 2: grades
 		switch(type){
 			case 1: {
-				return this.createQuestionForm("Yes/No question");
+				return this.createSimpleQuestionForm("Yes/No question");
 			}
 			case 2: {
 				// create grades
-				return this.createQuestionForm("Grades question");
+				return this.createSimpleQuestionForm("Grades question");
 			}
 			case 3: {
 				// create grades
@@ -236,7 +236,7 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 		return oForm;
 	},
 
-	createQuestionForm: function(title){
+	createSimpleQuestionForm: function(title){
 		var oForm = this.createForm();
 		var oTitleLabel = new sap.m.Label({
 			text : title
@@ -313,12 +313,15 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 
 	createSelectDialogCombo: function(){
 		var that = this;
+		var i18nModel = sap.ui.getCore().getModel("i18n");
+		var yes = i18nModel.getProperty("YES");
+		var no = i18nModel.getProperty("NO");
 		// add new question dialog
 		var listItemYesNo = new sap.m.StandardListItem({
 			title: "{i18n>YES_NO}",
 			customData:[new sap.ui.core.CustomData({key: "type", value: 1}),
 			new sap.ui.core.CustomData({key: "multiple", value: false}),
-			new sap.ui.core.CustomData({key: "items", value: [{answertext:"Yes"}, {answertext:"No"}]})]
+			new sap.ui.core.CustomData({key: "items", value: [{answertext:yes}, {answertext:no}]})]
 		});
 		var listItemGrades = new sap.m.StandardListItem({
 			title: "{i18n>GRADES}",

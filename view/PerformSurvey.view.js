@@ -66,11 +66,11 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		if(this.getModel("info")){
 			var currentCounter = this.getCurrentCounter();
 			if(this.getModel("info").getProperty("/notExisting")){
-				return this.createNotPossibleForm("Not existing", "Unfortunately the survey is not existing");
+				return this.createNotPossibleForm("NOT_EXISTING");
 			} else 	if(this.getModel("info").getProperty("/notStarted")){
-				return this.createNotPossibleForm("Not started", "Unfortunately the survey is not started yet");
+				return this.createNotPossibleForm("NOT_STARTED");
 			} else 	if(this.getModel("info").getProperty("/finished")){
-				return this.createNotPossibleForm("Already finished", "Unfortunately the survey is is already finished");
+				return this.createNotPossibleForm("FINISHED");
 			} else 	if(this.getModel("info").getProperty("/alreadyPerformed")){
 				return this.createThanksForm();
 			} else 	if(currentCounter===this.getModel("survey").getProperty("/questions").length){
@@ -283,18 +283,18 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 		return oForm;
 	},
 
-	createNotPossibleForm: function(title, text){
+	createNotPossibleForm: function(title){
 		var oForm = new sap.ui.layout.form.SimpleForm({
-			editable        : false,
-			layout          : "ResponsiveGridLayout"
+			editable : false,
+			layout : "ResponsiveGridLayout"
 		});
-		this.getModel("info").setProperty("/title", title);
+		this.getModel("info").setProperty("/title", sap.ui.getCore().getModel("i18n").getProperty(title));
 		//oForm.addContent(oTitleLabel);
 		var currentCounter = this.getCurrentCounter();
 		var that = this;
 
 		var oText = new sap.m.Text({
-			text: text,
+			text: "{i18n>"+title+"_LABEL}",
 			textAlign: sap.ui.core.TextAlign.Center
 		});
 		oText.addStyleClass("questionTitle");
