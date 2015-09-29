@@ -192,7 +192,8 @@ sap.ui.controller("quicksurvey.view.AddSurvey", {
 		var survey = {
 			name : model.getProperty("/title"),
 			answersChangable : model.getProperty("/answersChangable"),
-			questions: model.getProperty("/questions")
+			questions: model.getProperty("/questions"),
+			fingerprint: sap.ui.getCore().getModel("fingerprint").getProperty("/fingerprint")
 		};
 
 		$.ajax({

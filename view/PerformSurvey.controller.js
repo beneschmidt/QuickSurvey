@@ -51,7 +51,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			var oBtnHome = new sap.m.Button({
 				icon : "sap-icon://home",
 				tooltip : "{i18n>BACK_TO_HOME}",
-				visible: currentCounter === numberOfQuestions,
+				visible: currentCounter === numberOfQuestions || oController.getView().getModel("info").getProperty("/alreadyFinished"),
 				press : function(ev) {
 					sap.ui.getCore().getEventBus().publish("nav", "to", {
 						id : "Launchpad"
@@ -77,7 +77,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			footerArrayRight.push(oBtnNext);
 			var oBtnNew = new sap.m.Button({
 				icon : "sap-icon://save",
-				visible : currentCounter === numberOfQuestions-1,
+				visible : currentCounter === numberOfQuestions-1 && !oController.getView().getModel("info").getProperty("/alreadyFinished"),
 				tooltip : "{i18n>SAVE}",
 				press : function(ev) {
 					var answers = oController.getView().getModel("perform").getProperty("/performed_questions/"+currentCounter+"/performed_answers");
@@ -126,7 +126,6 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 
 	loadData: function(id){
 		var that= this;
-
 		$.ajax({
 			url: './survey',
 			type: 'get',
@@ -141,18 +140,24 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 					console.log("An unknown error occured: "+textStatus);
 				}
 			},
-			data: { id: id }
+			data: {
+				id: id,
+				fingerprint: sap.ui.getCore().getModel("fingerprint").getProperty("/fingerprint")
+			}
 		});
 	},
 
 	updateModelFromAjax: function(json){
-		var survey = json.Survey[0];
-		if(survey){
+		if(json.alreadyPerformed){
+			this.getView().getModel("info").setProperty("/alreadyPerformed", true);
+		} else if(json.Survey[0]){
+			var survey = json.Survey[0];
 			var input = {
 				title   : survey.name,
 				answersChangable : survey.changeanswers,
 				surveyId: survey.objectId,
-				questions: survey.questions
+				questions: survey.questions,
+				fingerprint: survey.fingerprint
 			};
 			if(survey.startedat && new Date().getTime() > survey.startedat){
 				if(survey.finishat && survey.finishat!=-1 && new Date().getTime() > survey.finishat){
@@ -225,7 +230,8 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 		var survey = {
 			survey_id : model.getProperty("/survey_id"),
 			performed_at : new Date().getTime(),
-			performed_questions: model.getProperty("/performed_questions")
+			performed_questions: model.getProperty("/performed_questions"),
+			fingerprint: sap.ui.getCore().getModel("fingerprint").getProperty("/fingerprint")
 		};
 
 		$.ajax({

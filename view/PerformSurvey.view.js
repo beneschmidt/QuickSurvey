@@ -71,6 +71,8 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 				return this.createNotPossibleForm("Not started", "Unfortunately the survey is not started yet");
 			} else 	if(this.getModel("info").getProperty("/finished")){
 				return this.createNotPossibleForm("Already finished", "Unfortunately the survey is is already finished");
+			} else 	if(this.getModel("info").getProperty("/alreadyPerformed")){
+				return this.createThanksForm();
 			} else 	if(currentCounter===this.getModel("survey").getProperty("/questions").length){
 				return this.createThanksForm();
 			} else {

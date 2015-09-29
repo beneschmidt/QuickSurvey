@@ -17,7 +17,6 @@ module.exports = {
 			} else {
 				var dbutils = require("./dbutils.js");
 				var toSend = dbutils.extractFullSurveyList(result, log);
-				log.info("fine");
 				that.write200(res, toSend);
 			}
 		}
@@ -32,10 +31,24 @@ module.exports = {
 		var that = this;
 		var callback = function(result, error){
 			if(error){
-				write500(res);
+				that.write500(res);
 			} else {
 				var toSend = dbutils.extractFullSurveyList(result, log);
-				that.write200(res, toSend);
+				if(req.query.fingerprint){
+					var fingerprintQuery = "SELECT COUNT(*) AS fcount FROM performed_survey WHERE fingerprint = $1";
+					var fingerprintParams = [req.query.fingerprint];
+					var fingerprintCallback = function(result, error){
+						if(error){
+							that.write500(res);
+						} else {
+							toSend.alreadyPerformed = result[0].fcount>0;
+							that.write200(res, toSend);
+						}
+					}
+					dbutils.executeSelectSQL(fingerprintQuery, fingerprintParams, log, fingerprintCallback);
+				} else {
+					that.write200(res, toSend);
+				}
 			}
 		}
 		dbutils.executeSelectSQL(sql, params, log, callback);
@@ -140,8 +153,8 @@ module.exports = {
 				sqlArray.push(deleteSurvey);
 				paramsArray.push(deleteSurveyParams);
 			}
-			var updateSurveyParams = [nextSid, body.name, body.answersChangable];
-			var updateSurvey = "INSERT INTO survey (id, name, changeanswers) VALUES ($1, $2, $3);";
+			var updateSurveyParams = [nextSid, body.name, body.answersChangable, body.fingerprint];
+			var updateSurvey = "INSERT INTO survey (id, name, changeanswers, fingerprint) VALUES ($1, $2, $3, $4);";
 			sqlArray.push(updateSurvey);
 			paramsArray.push(updateSurveyParams);
 			if(body.questions){
@@ -211,8 +224,8 @@ module.exports = {
 			log.info("maxIds = "+nextSid+", "+nextQid+", "+nextAid);
 			var paramsArray = [];
 			var sqlArray =[];
-			var updateSurveyParams = [nextSid, body.survey_id, body.performed_at];
-			var updateSurvey = "INSERT INTO performed_survey (id, survey_id, performed_at) VALUES ($1, $2, $3);";
+			var updateSurveyParams = [nextSid, body.survey_id, body.performed_at, body.fingerprint];
+			var updateSurvey = "INSERT INTO performed_survey (id, survey_id, performed_at, fingerprint) VALUES ($1, $2, $3, $4);";
 			sqlArray.push(updateSurvey);
 			paramsArray.push(updateSurveyParams);
 			if(body.performed_questions){
