@@ -3,8 +3,12 @@ module.exports = {
     var sid, qid;
     var objects = [];
     var spos = -1, qpos = -1;
+    // multiple rows are parsed into surveys
+    // there might be multiple surveys, so you also have to check if the survey id
+    // has changed. This only works if the sql is sorted correctly
     for(var i = 0; i <rows.length; i++){
       var current = rows[i];
+      // new survey, if the survey id has changed
       if(sid!=current.sid){
         sid=current.sid;
         spos++;
@@ -18,6 +22,7 @@ module.exports = {
           finishat: current.finishat
         }
       }
+      // new question in the current survey, if the question id has changed
       if(qid!= current.qid){
         qpos++;
         qid = current.qid;
@@ -29,6 +34,7 @@ module.exports = {
           type: current.type
         });
       }
+      // new answer in the current question, if the answer id has changed
       if(objects[spos].questions[qpos]){
         objects[spos].questions[qpos].answers.push({
           objectId: current.aid,
@@ -46,6 +52,8 @@ module.exports = {
   },
 
   executeUpdateMultipleSQL: function(sqlArray, paramArray, log, callback){
+    // update process of multiple sqls
+    // the sql array contains the sqls, the param array their parameters (same index)
     var that = this;
     var counter = 0;
     var innerCallback = function(sqlOK){
@@ -58,6 +66,7 @@ module.exports = {
           log.info("All "+counter+" were inserted!");
           callback(true);
         } else {
+          // recursive callback call of the sql update
           this.executeUpdateSQL(sqlArray[counter], paramArray[counter], log, innerCallback);
         }
       }
@@ -66,6 +75,7 @@ module.exports = {
   },
 
   executeUpdateSQL : function(sql, params, log, callback){
+    // only for updates
     this.log = log;
     var that = this;
     var pg = require('pg');
@@ -117,6 +127,7 @@ module.exports = {
   },
 
   executeSelectSQL: function(select, params, log, callback){
+    // only for selects
     this.log = log;
     this.callback = callback;
     var that = this;
@@ -170,6 +181,7 @@ module.exports = {
     });
   },
 
+/*
   getNextId : function(callback, table, log){
     var dbutils = require("./dbutils.js");
     var sql = "SELECT MAX(id) AS id FROM "+table;
@@ -182,5 +194,5 @@ module.exports = {
       }
     }
     dbutils.executeSelectSQL(sql, [], log, surveyCallback);
-  },
+  },*/
 }
