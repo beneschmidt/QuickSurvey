@@ -116,19 +116,44 @@ sap.ui.jsview("quicksurvey.view.SurveyList", {
                   var surveyId = context.getProperty("objectId");
                   console.log("stopping survey "+surveyId);
                   oController.stopSurvey(surveyId);
-                },
+                }
               }),
               new sap.m.Button({
                 icon : "sap-icon://delete",
                 press: function(oEvent){
                   var context = oEvent.getSource().getBindingContext();
                   var surveyId = context.getProperty("objectId");
-                  console.log("deleting survey");
-                  oController.deleteSurvey(surveyId);
-                },
-              }),
+
+                  var context = oEvent.getSource().getBindingContext();
+                  var surveyId = context.getProperty("objectId");
+                  var surveyText = context.getProperty("name");
+                  var dialog = new sap.m.Dialog({
+                    title: surveyText,
+                    contentHeight:"100%",
+                    type: sap.m.DialogType.Standard,
+                    content: new sap.m.Text({ text: '{i18n>CONFIRM_DELETE}' }),
+                    beginButton: new sap.m.Button({
+                      text: '{i18n>YES}',
+                      press: function (oEvent) {
+                        console.log("deleting survey");
+                        oController.deleteSurvey(surveyId);
+                        dialog.close();
+                      }
+                    }),
+                    endButton: new sap.m.Button({
+                      text: '{i18n>NO}',
+                      press: function () {
+                        dialog.close();
+                      }
+                    }),
+                    afterClose: function() {
+                      dialog.destroy();
+                    }
+                  }).open();
+                }
+              })
             ]
-          }),
+          })
         ]
       })],
       press: function(ev){
