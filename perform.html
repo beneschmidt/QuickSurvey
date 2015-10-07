@@ -16,6 +16,10 @@
     "quicksurvey": "./"
   }'>
   </script>
+  <script type="text/javascript" src="js/qrcodejs-master/qrcode.min.js"></script>
+  <script type="text/javascript" src="js/d3/d3.min.js"></script>
+  <script type="text/javascript" src="js/fingerprint2/fingerprint2.js"></script>
+  <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
   <!-- alternative SAPUI5/OpenUI5 locations
 
   //OpenUI5
@@ -36,7 +40,6 @@
 
 <script>
 sap.ui.getCore().attachInit(function() {
-  sap.ui.jsview("RootView", "quicksurvey.view.App").placeAt('root');
 
   var that = this;
   new Fingerprint2().get(function(result){
@@ -48,15 +51,19 @@ sap.ui.getCore().attachInit(function() {
 
     var model = new sap.ui.model.json.JSONModel(fingerprint);
     sap.ui.getCore().setModel(model, "fingerprint");
-  });
+	
+	
+	  sap.ui.jsview("RootView", "quicksurvey.view.App").placeAt('root');
 
-  var sValue = jQuery.sap.getUriParameters().get("id");
-  if(sValue){
-    sap.ui.getCore().getEventBus().publish("nav", "to", {
-      id : "PerformSurvey",
-      surveyId : sValue
-    });
-  }
+
+	  var sValue = jQuery.sap.getUriParameters().get("id");
+	  if(sValue){
+		sap.ui.getCore().getEventBus().publish("nav", "to", {
+		  id : "PerformSurvey",
+		  surveyId : sValue
+		});
+	  }
+  });
 });
 
 

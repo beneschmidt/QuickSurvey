@@ -67,7 +67,7 @@ sap.ui.controller("quicksurvey.view.PerformSurvey", {
 			var oBtnNext = new sap.m.Button({
 				icon : "sap-icon://arrow-right",
 				tooltip : "{i18n>NEXT_PAGE}",
-				visible: currentCounter < numberOfQuestions-1,
+				visible: currentCounter < numberOfQuestions-1 && !oController.getView().getModel("info").getProperty("/alreadyFinished"),
 				press : function(ev) {
 					var answers = oController.getView().getModel("perform").getProperty("/performed_questions/"+currentCounter+"/performed_answers");
 					var hasAlreadySelectedSomething = answers? answers.length>0:false;

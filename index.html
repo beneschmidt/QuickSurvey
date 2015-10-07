@@ -30,7 +30,6 @@ jQuery.sap.require("sap.ui.core.routing.Router");  // load Router module
 jQuery.sap.require("sap.ui.core.routing.Route");
 jQuery.sap.require("sap.m.routing.RouteMatchedHandler");  // load RouteMatchedHandler module
 sap.ui.getCore().attachInit(function() {
-  sap.ui.jsview("RootView", "quicksurvey.view.App").placeAt('root');
 
   // initialize the fingerprint to identify the client
   var that = this;
@@ -43,6 +42,7 @@ sap.ui.getCore().attachInit(function() {
     // save it in the model
     var model = new sap.ui.model.json.JSONModel(fingerprint);
     sap.ui.getCore().setModel(model, "fingerprint");
+    sap.ui.jsview("RootView", "quicksurvey.view.App").placeAt('root');
   });
 });
 </script>
