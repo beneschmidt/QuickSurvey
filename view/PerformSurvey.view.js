@@ -245,7 +245,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 			editable        : false,
 			layout          : "ResponsiveGridLayout"
 		});
-		this.getModel("info").setProperty("/title", "Thanks");
+		this.getModel("info").setProperty("/title", sap.ui.getCore().getModel("i18n").getProperty("THANK_YOU"));
 		//oForm.addContent(oTitleLabel);
 		var currentCounter = this.getCurrentCounter();
 		var that = this;
