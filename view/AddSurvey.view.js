@@ -137,18 +137,18 @@ sap.ui.jsview("quicksurvey.view.AddSurvey", {
 			press : function(evt){
 				if (evt.getSource().getPressed()){
 					this.getModel("survey").setProperty("/answersChangable", true);
-					oChangeAnswers.setText("Yes");
+					oChangeAnswers.setText(sap.ui.getCore().getModel("i18n").getProperty("YES"));
 				} else {
 					this.getModel("survey").setProperty("/answersChangable", false);
-					oChangeAnswers.setText("No");
+					oChangeAnswers.setText(sap.ui.getCore().getModel("i18n").getProperty("NO"));
 				}
 			}
 		});
 		oChangeAnswers.bindProperty("text", "survey>/answersChangable", function(changable) {
 			if (changable) {
-				return "Yes"
+				return sap.ui.getCore().getModel("i18n").getProperty("YES");
 			} else{
-				return "No";
+				return sap.ui.getCore().getModel("i18n").getProperty("NO");
 			}
 		});
 		var oChangeAnswersLabel = new sap.m.Label({

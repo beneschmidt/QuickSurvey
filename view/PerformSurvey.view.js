@@ -194,7 +194,7 @@ sap.ui.jsview("quicksurvey.view.PerformSurvey", {
 	},
 
 	createFreeTextForm: function(){
-		this.getModel("info").setProperty("/title", "Free Text");
+		this.getModel("info").setProperty("/title",  sap.ui.getCore().getModel("i18n").getProperty("FREE_TEXT"));
 		var oForm = this.createForm();
 		var currentCounter = this.getCurrentCounter();
 		var that = this;
